@@ -1,11 +1,52 @@
 <es-list>
 
-    <virtual each="{ opts.items }"><yield/></virtual>
+    <div each="{ opts.items }" class="list-item"><yield/></div>
+    <div>
+        <span ref="prev" class="list-page" onclick="{ this.submit }" data-value="0">{ opts.prev }</span>
+        <span each="{ page in opts.pages }" class="list-page" data-value="{ page }" onclick="{ this.submit }">{ page+1 }</span>
+        <span ref="next" class="list-page" onclick="{ this.submit }" data-value="1">{ opts.next }</span>
+    </div>
 
     <style>
+        :scope .list-page {
+            cursor: pointer;
+        }
+        :scope .active {
+            font-weight: bold;
+        }
+        :scope .list-page:after {
+            content: ' | ';
+        }
+        :scope .list-page:last-child:after {
+            content: '';
+        }
     </style>
 
     <script>
+
+        var tag = this;
+
+        tag.on('mount', function() {
+            tag.opts.size = +tag.opts.size || 10;
+        });
+
+        tag.on('update', function() {
+            var num_pages = Math.floor(tag.opts.total / tag.opts.size) + 1;
+            tag.opts.pages = Array.apply(null, Array(num_pages)).map(function (_, i) {return i;});
+        });
+
+        tag.submit = function(e) {
+            var page = +e.currentTarget.dataset.value;
+            tag.root.querySelectorAll(".active").forEach(function(el) {
+                el.classList.remove("active");
+            });
+            tag.root.querySelectorAll(".list-page")[page+1].classList.add("active");
+            tag.refs.prev.dataset.value = Math.max(page - 1, 0);
+            tag.refs.next.dataset.value = Math.min(page + 1, Math.floor(tag.opts.total / tag.opts.size));
+            tag.trigger('submit', { value: page });
+            if (e) e.preventDefault();
+        };
+
     </script>
 
 </es-list>

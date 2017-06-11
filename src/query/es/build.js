@@ -1,7 +1,7 @@
 /* Build ES Query */
 var _ = require('lodash');
 
-module.exports = function(match,fields,terms) {
+module.exports = function(match,fields,terms,size,from) {
 
     var bool = {
         must: [],
@@ -71,6 +71,8 @@ module.exports = function(match,fields,terms) {
     }
 
     var body = {
+        size: size || 10,
+        from: from || 0,
         query: {
             bool: bool
         },

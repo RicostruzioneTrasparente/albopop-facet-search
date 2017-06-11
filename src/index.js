@@ -10,8 +10,8 @@ var NanoFlux = require('nanoflux-fusion'),
 var query = require("./query/es/run");
 
 var initialState = {
-    query: { match: "", fields: [], terms: {} },
-    response: { items: [], aggs: {} }
+    query: { match: "", fields: [], terms: {}, size: 10, from: 0 },
+    response: { total: 0, items: [], aggs: {} }
 };
 
 require('./tags/es-facet/es-facet-keywords.tag.html');
@@ -50,14 +50,20 @@ esSearchTags[0].on("submit", function(state) {
 
 require('./tags/es-list/es-list.tag.html');
 var esListTags = riot.mount('es-list', { items: initialState.items });
+initialState.query.size = +esListTags[0].opts.size || 10;
+esListTags[0].on("submit", function(state) {
+    search({ from: state.value });
+});
 
 NanoFlux.createFusionator({
     search: function(previousState, args){
         var arg = args[0] || {};
-		return query(
+        return query(
             arg.match || previousState.query.match,
             arg.fields || previousState.query.fields,
-            _.defaults(arg.terms || {}, previousState.query.terms)
+            _.defaults(arg.terms || {}, previousState.query.terms),
+            arg.size || previousState.query.size,
+            arg.from || previousState.query.from
         );
 	}
 }, initialState);
@@ -105,6 +111,7 @@ var subscription = fusionStore.subscribe(this, function(currentState) {
     _.forEach(esListTags, function(t) {
         t.update({
             opts: _.defaults({
+                total: currentState.response.total,
                 items: currentState.response.items
             }, t.opts)
         });

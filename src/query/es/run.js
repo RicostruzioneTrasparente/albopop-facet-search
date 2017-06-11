@@ -1,7 +1,7 @@
 /* Run ES Query */
 var _ = require('lodash');
 
-module.exports = function(match,fields,terms) {
+module.exports = function(match,fields,terms,size,from) {
 
     var buildQuery = require("./build");
     var elasticsearch = require('elasticsearch'),
@@ -16,7 +16,7 @@ module.exports = function(match,fields,terms) {
     return client.search({
         index: window.ES_CONFIG ? window.ES_CONFIG.index : 'my-index',
         type: window.ES_CONFIG ? window.ES_CONFIG.type : 'my-type',
-        body: buildQuery(match,fields,terms)
+        body: buildQuery(match,fields,terms,size,from)
     }).then(function(response) {
 
         var aggs = {};
@@ -33,6 +33,7 @@ module.exports = function(match,fields,terms) {
                 terms: terms
             },
             response: {
+                total: response.hits.total,
                 items: response.hits.hits.map(function(hit) {
                     return hit['_source'];
                 }),
