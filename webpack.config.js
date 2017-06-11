@@ -35,10 +35,8 @@ module.exports = {
     },
     // Enable sources for better debug in the browser console
     devtool: 'source-map',
-        devServer: {
-        host: "localhost",
-        port: 8081,
-        colors: true,
-        progress: true
+    devServer: {
+        port: 8088,
+        disableHostCheck: true
     }
 };
