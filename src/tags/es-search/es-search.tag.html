@@ -1,0 +1,20 @@
+<es-search>
+
+    <p>
+        <form id="search-form" onsubmit="{ this.submit }">
+            <input id="search-input" ref="input" placeholder="Search..." value="{ opts.value || '' }">
+        </form>
+    </p>
+
+    <style>
+    </style>
+
+    <script>
+        var tag = this;
+        tag.submit = function(e) {
+            tag.trigger('submit', { value: tag.refs.input.value });
+            if (e) e.preventDefault();
+        };
+    </script>
+
+</es-search>

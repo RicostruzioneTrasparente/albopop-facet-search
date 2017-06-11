@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ricostruzione Trasparente | AlboPOP | NanoFlux Fusion + RiotJS + Elasticsearch</title>
+    </head>
+    <body>
+
+        <header>
+            <h1>Albi Pretori | Ricostruzione Trasparente (dev)</h2>
+        </header>
+
+        <section>
+
+            <h2>Cerca e filtra</h2>
+
+            <div id="search-container">
+                <h3>Testo libero</h3>
+                <es-search fields="title,description"></es-search>
+            </div>
+
+            <div id="facet-container">
+                <h3>Paesi</h3>
+                <es-facet-keywords field="country"></es-facet-keywords>
+                <h3>Regioni</h3>
+                <es-facet-keywords field="region"></es-facet-keywords>
+                <h3>Province</h3>
+                <es-facet-keywords field="province"></es-facet-keywords>
+                <h3>Comuni</h3>
+                <es-facet-keywords field="municipality" composition="should"></es-facet-keywords>
+                <h3>Curatori</h3>
+                <es-facet-keywords field="channel.webMaster"></es-facet-keywords>
+                <h3>Giorni</h3>
+                <es-facet-datetimes format="%Y-%m-%d" field="pubStart" interval="day"></es-facet-datetimes>
+                <h3>Numero</h3>
+                <es-facet-numbers format="0,0" field="longitude" interval="1"></es-facet-numbers>
+            </div>
+
+        </section>
+
+        <section>
+
+            <h2>Risultati</h2>
+
+            <div id="list-container">
+                <h3>Atti amministrativi</h3>
+                <es-list>
+                    <div>
+                        <hr>
+                        <p>{ uid }</p>
+                        <h4>{ title }</h4>
+                        <p>{ description }</p>
+                        <p>{ pubStart } - { pubEnd }</p>
+                    </div>
+                </es-list>
+            </div>
+
+        </section>
+
+        <footer>
+            <p>CC BY 2017 onData | Powered by NanoFlux Fusion + RiotJS + Elasticsearch</p>
+        </footer>
+
+        <script src="./config.js"></script>
+        <script src="./js/bundle.js"></script>
+
+    </body>
+</html>

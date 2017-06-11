@@ -1,0 +1,64 @@
+<es-facet-numbers>
+
+    <div
+        each="{ opts.items }"
+        ref="input"
+        data-value="{ value }"
+        class="facet-item { disable: !count } { active: active }"
+        onclick="{ this.submit }"
+    >
+        <span class="facet-label">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
+    </div>
+
+    <style>
+        :scope .facet-item {
+            cursor: pointer;
+        }
+        :scope .active {
+            font-weight: bold;
+        }
+        :scope .disable {
+            color: lightgrey;
+        }
+        :scope .facet-count:before {
+            content: '(';
+        }
+        :scope .facet-count:after {
+            content: ')';
+        }
+    </style>
+
+    <script>
+
+        var tag = this,
+            numeral = require('numeral');
+
+        tag.on('mount', function() {
+            tag.opts.type = 'numbers';
+            tag.opts.field = tag.opts.field || "";
+            tag.opts.interval = tag.opts.interval || "";
+            tag.opts.format = tag.opts.format || "0,0.00";
+            tag.opts.composition = tag.opts.composition || 'must';
+            tag.opts.items = tag.opts.items || [];
+        });
+
+        tag.on('update', function() {
+            var t = this;
+            t.opts.items.forEach(function(v,k) {
+                t.opts.items[k].label = v.label || numeral(v.value).format(t.opts.format);
+            });
+        });
+
+        tag.submit = function(e) {
+            e.currentTarget.classList.toggle('active');
+            var data = {};
+            data[tag.opts.composition+':'+tag.opts.type+':'+tag.opts.field+':'+tag.opts.interval] = tag.refs.input
+                .filter(function(el) { return el.classList.contains('active'); })
+                .map(function(el) { return el.dataset.value; });
+            tag.trigger('submit',data);
+            if (e) e.preventDefault();
+        };
+
+    </script>
+
+</es-facet-numbers>

@@ -1,0 +1,30 @@
+{
+  "name": "albopop-facet-search",
+  "version": "0.1.0",
+  "description": "Interfaccia grafica per la ricerca e la navigazione dell'archivio di AlboPOP indicizzato su Elasticsearch.",
+  "main": "./src/index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack"
+  },
+  "author": "Alessio Cimarelli <alessio.cimarelli@ondata.it>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RicostruzioneTrasparente/albopop-facet-search.git"
+  },
+  "dependencies": {
+    "elasticsearch": "^13.0.1",
+    "nanoflux-fusion": "^0.6.0-beta",
+    "numeral": "^2.0.6",
+    "riot": "^3.6.0",
+    "strftime": "^0.10.0"
+  },
+  "devDependencies": {
+    "css-loader": "^0.26.1",
+    "file-loader": "^0.10.0",
+    "riot-compiler": "^3.1.2",
+    "riot-tag-loader": "^1.0.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^2.6.1"
+  }
+}
