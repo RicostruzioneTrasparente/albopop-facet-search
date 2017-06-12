@@ -1,10 +1,8 @@
 <es-search>
 
-    <p>
-        <form id="search-form" onsubmit="{ this.submit }">
-            <input id="search-input" ref="input" placeholder="Search..." value="{ opts.value || '' }">
-        </form>
-    </p>
+    <form class="search-form" onsubmit="{ this.submit }">
+        <input class="search-input" placeholder="{ opts.placeholder || '' }" value="{ opts.value || '' }">
+    </form>
 
     <style>
     </style>
@@ -12,7 +10,7 @@
     <script>
         var tag = this;
         tag.submit = function(e) {
-            tag.trigger('submit', { value: tag.refs.input.value });
+            tag.trigger('submit', { value: tag.root.querySelector('input').value });
             if (e) e.preventDefault();
         };
     </script>

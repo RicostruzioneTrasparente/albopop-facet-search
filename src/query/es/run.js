@@ -21,9 +21,7 @@ module.exports = function(match,fields,terms,size,from) {
 
         var aggs = {};
         _.forOwn(terms, function(v,k,o) {
-            var key = k.split(':'),
-                name = key[1];
-            aggs[name] = response.aggregations[name].buckets
+            aggs[v.field] = response.aggregations[v.field].buckets
         });
 
         var result = {

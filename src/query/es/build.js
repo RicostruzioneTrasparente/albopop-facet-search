@@ -24,29 +24,24 @@ module.exports = function(match,fields,terms,size,from) {
         var aggs = {};
         _.forOwn(terms, function(v,k,o) {
 
-            var key = k.split(':'),
-                type = key[0],
-                name = key[1],
-                interval = key[2] || "";
-
-            switch (type) {
+            switch (v.type) {
 
                 case 'keywords':
-                    aggs[name] = { terms: { field: name, order: { _term: 'asc' } } };
-                    if (!_.isEmpty(v)) {
+                    aggs[v.field] = { terms: { field: v.field, order: { _term: 'asc' } } };
+                    if (!_.isEmpty(v.values)) {
                         var tobj = {};
-                        tobj[name] = v;
+                        tobj[v.field] = v.values;
                         query.bool.must.bool.should.push({ terms: tobj });
                     }
                     break;
 
                 case 'datetimes':
-                    aggs[name] = { date_histogram: { field: name, interval: interval } };
-                    _.forEach(v, function(vi) {
+                    aggs[v.field] = { date_histogram: { field: v.field, interval: v.interval } };
+                    _.forEach(v.values, function(vi) {
                         var tobj = {};
-                        tobj[name] = {
+                        tobj[v.field] = {
                             gte: vi,
-                            lt: vi+'||+1'+interval[0],
+                            lt: vi+'||+1'+v.interval[0],
                             format: 'epoch_millis'
                         };
                         query.bool.must.bool.should.push({ range: tobj });
@@ -54,12 +49,12 @@ module.exports = function(match,fields,terms,size,from) {
                     break;
 
                 case 'numbers':
-                    aggs[name] = { histogram: { field: name, interval: +interval } };
-                    _.forEach(v, function(vi) {
+                    aggs[v.field] = { histogram: { field: v.field, interval: +v.interval } };
+                    _.forEach(v.values, function(vi) {
                         var tobj = {};
-                        tobj[name] = {
+                        tobj[v.field] = {
                             gte: +vi,
-                            lt: (+vi)+(+interval)
+                            lt: (+vi)+(+v.interval)
                         };
                         query.bool.must.bool.should.push({ range: tobj });
                     });

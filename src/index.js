@@ -14,42 +14,35 @@ var initialState = {
     response: { total: 0, items: [], aggs: {} }
 };
 
-require('./tags/es-facet/es-facet-keywords.tag.html');
-var esFacetKeywordsTags = riot.mount('es-facet-keywords');
-_.forEach(esFacetKeywordsTags, function(t) {
-    initialState.query.terms[t.opts.type+':'+t.opts.field] = [];
+require('./tags/es-facet/');
+var esFacetTags = _.concat(
+    riot.mount('es-facet-keywords'),
+    riot.mount('es-facet-datetimes'),
+    riot.mount('es-facet-numbers')
+);
+_.forEach(esFacetTags, function(t) {
+    initialState.query.terms[t.opts.field] = {
+        type: t.opts.type,
+        field: t.opts.field,
+        interval: t.opts.interval,
+        values: []
+    };
     t.on("submit", function(state) {
-        search({ terms: state });
+        var tobj = {};
+        tobj[t.opts.field] = state;
+        search({ terms: tobj });
     });
 });
 
-require('./tags/es-facet/es-facet-datetimes.tag.html');
-var esFacetDatetimesTags = riot.mount('es-facet-datetimes');
-_.forEach(esFacetDatetimesTags, function(t) {
-    initialState.query.terms[t.opts.type+':'+t.opts.field+':'+t.opts.interval] = [];
-    t.on("submit", function(state) {
-        search({ terms: state });
-    });
-});
-
-require('./tags/es-facet/es-facet-numbers.tag.html');
-var esFacetNumbersTags = riot.mount('es-facet-numbers');
-_.forEach(esFacetNumbersTags, function(t) {
-    initialState.query.terms[t.opts.type+':'+t.opts.field+':'+t.opts.interval] = [];
-    t.on("submit", function(state) {
-        search({ terms: state });
-    });
-});
-
-require('./tags/es-search/es-search.tag.html');
-var esSearchTags = riot.mount('es-search', { value: initialState.query.match });
+require('./tags/es-search/');
+var esSearchTags = riot.mount('es-search');
 initialState.query.fields = esSearchTags[0].opts.fields ? esSearchTags[0].opts.fields.split(',') : [];
 esSearchTags[0].on("submit", function(state) {
     search({ match: state.value });
 });
 
-require('./tags/es-list/es-list.tag.html');
-var esListTags = riot.mount('es-list', { items: initialState.items });
+require('./tags/es-list/');
+var esListTags = riot.mount('es-list');
 initialState.query.size = +esListTags[0].opts.size || 10;
 esListTags[0].on("submit", function(state) {
     search({ from: state.value });
@@ -86,13 +79,12 @@ function fillFacets(newState, currentState, actionName) {
         }));
 
         var newFacets = _.fromPairs(_.map(newState.response.aggs[k], function(el) {
-            var name = _.filter(_.keys(newState.query.terms), function(key) { return _.includes(key,':'+k); })[0];
             return [
                 el.key,
                 {
                     key: el.key,
                     doc_count: el.doc_count,
-                    active: _.includes(newState.query.terms[name],_.toString(el.key))
+                    active: _.includes(newState.query.terms[k].values,_.toString(el.key))
                 }
             ];
         }));
@@ -117,7 +109,7 @@ var subscription = fusionStore.subscribe(this, function(currentState) {
         });
     });
 
-    _.forEach(_.concat(esFacetKeywordsTags,esFacetDatetimesTags,esFacetNumbersTags), function(t) {
+    _.forEach(esFacetTags, function(t) {
         t.update({
             opts: _.defaults({
                 items: _.map(currentState.response.aggs[t.opts.field], function(el) {

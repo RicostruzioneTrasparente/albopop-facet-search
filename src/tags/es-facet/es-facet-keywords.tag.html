@@ -40,11 +40,13 @@
 
         tag.submit = function(e) {
             e.currentTarget.classList.toggle('active');
-            var data = {};
-            data[tag.opts.type+':'+tag.opts.field] = tag.refs.input
-                .filter(function(el) { return el.classList.contains('active'); })
-                .map(function(el) { return el.dataset.value; });
-            tag.trigger('submit',data);
+            tag.trigger('submit', {
+                type: tag.opts.type,
+                field: tag.opts.field,
+                values: tag.refs.input
+                    .filter(function(el) { return el.classList.contains('active'); })
+                    .map(function(el) { return el.dataset.value; })
+            });
             if (e) e.preventDefault();
         };
 

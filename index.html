@@ -15,24 +15,59 @@
 
             <div id="search-container">
                 <h3>Testo libero</h3>
-                <es-search fields="title,description"></es-search>
+                <es-search fields="title,description" placeholder="Cerca..." value="terremoto">
+                    <!--
+                    <form class="search-form">
+                        <input class="search-input" placeholder="{ opts.placeholder }" value="{ opts.value }">
+                    </form>
+                    -->
+                </es-search>
             </div>
 
             <div id="facet-container">
+
                 <h3>Paesi</h3>
-                <es-facet-keywords field="country"></es-facet-keywords>
+                <es-facet-keywords field="country">
+                    <!--
+                    <div class="facet-item { disable } { active }">
+                        <span class="facet-label">{ label || value }</span>&nbsp;<span class="facet-count">{ count }</span>
+                    </div>
+                    -->
+                </es-facet-keywords>
+
                 <h3>Regioni</h3>
                 <es-facet-keywords field="region"></es-facet-keywords>
+
                 <h3>Province</h3>
                 <es-facet-keywords field="province"></es-facet-keywords>
+
                 <h3>Comuni</h3>
                 <es-facet-keywords field="municipality"></es-facet-keywords>
+
+                <h3>Tipologie</h3>
+                <es-facet-keywords field="type"></es-facet-keywords>
+
                 <h3>Curatori</h3>
                 <es-facet-keywords field="channel.webMaster"></es-facet-keywords>
+
                 <h3>Giorni</h3>
-                <es-facet-datetimes format="%Y-%m-%d" field="pubStart" interval="day"></es-facet-datetimes>
+                <es-facet-datetimes format="%Y-%m-%d" field="pubStart" interval="day">
+                    <!--
+                    <div class="facet-item { disable } { active }">
+                        <span class="facet-label">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
+                    </div>
+                    -->
+                </es-facet-datetimes>
+
                 <h3>Numero</h3>
-                <es-facet-numbers format="0,0" field="longitude" interval="1"></es-facet-numbers>
+                <es-facet-numbers format="0,0" field="longitude" interval="1">
+                    <!--
+                    <div class="facet-item { disable } { active }">
+                        <span class="facet-label">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
+                    </div>
+                    -->
+                </es-facet-numbers>
+
             </div>
 
         </section>
@@ -44,11 +79,22 @@
             <div id="list-container">
                 <h3>Atti amministrativi</h3>
                 <es-list size=25 prev="Pagina precedente" next="Pagina successiva">
-                    <hr>
-                    <p>{ uid }</p>
-                    <h4>{ title }</h4>
-                    <p>{ description }</p>
-                    <p>{ pubStart } - { pubEnd }</p>
+                    <!--
+                    <div class="list-item">
+                    -->
+                        <hr>
+                        <p>{ uid }</p>
+                        <h4>{ title }</h4>
+                        <p>{ description }</p>
+                        <p>{ pubStart } - { pubEnd }</p>
+                    <!--
+                    </div>
+                    <div>
+                        <span class="list-page">{ opts.prev }</span>
+                        <span class="list-page">{ page }</span>
+                        <span class="list-page">{ opts.next }</span>
+                    </div>
+                    -->
                 </es-list>
             </div>
 
