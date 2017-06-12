@@ -35,6 +35,12 @@
             tag.opts.pages = Array.apply(null, Array(num_pages)).map(function (_, i) {return i;});
         });
 
+        tag.on('updated', function() {
+            if (!tag.root.querySelectorAll(".active").length) {
+                tag.root.querySelectorAll(".list-page")[1].classList.add("active");
+            }
+        });
+
         tag.submit = function(e) {
             var page = +e.currentTarget.dataset.value;
             tag.root.querySelectorAll(".active").forEach(function(el) {
