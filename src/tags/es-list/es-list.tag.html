@@ -28,6 +28,8 @@
 
         tag.on('mount', function() {
             tag.opts.size = +tag.opts.size || 10;
+            tag.opts.prev = tag.opts.prev || "Previous";
+            tag.opts.next = tag.opts.next || "Next";
         });
 
         tag.on('update', function() {

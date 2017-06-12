@@ -15,10 +15,15 @@
 
             <div id="search-container">
                 <h3>Testo libero</h3>
+                <!-- Componente per la ricerca libera full-text
+                     - fields: campi in cui effettuare la ricerca
+                     - placeholder: come per il tag input
+                     - value: valore iniziale
+                -->
                 <es-search fields="title,description" placeholder="Cerca..." value="terremoto">
-                    <!--
+                    <!-- Markup generato dal componente tra { } i valori degli attributi indicati
                     <form class="search-form">
-                        <input class="search-input" placeholder="{ opts.placeholder }" value="{ opts.value }">
+                        <input class="search-input" placeholder="{ placeholder }" value="{ value }">
                     </form>
                     -->
                 </es-search>
@@ -27,11 +32,22 @@
             <div id="facet-container">
 
                 <h3>Paesi</h3>
+                <!-- Componente per il filtro per parole (variabile categoriale)
+                     - field: campo su cui applicare il filtro
+                -->
                 <es-facet-keywords field="country">
+                    <!-- Markup generato dal componente
+                         - disable: classe aggiunta alle voci con conteggio nullo
+                         - active: classe aggiunta alle voci selezionate (filtro attivo)
+                         - value: valore della variabile categoriale (parola)
+                         - label: stringa mostrata all'utente, uguale a { valore }
+                         - count: conteggio dei documenti per valore
+                    -->
                     <!--
                     <div class="facet-item { disable } { active }">
-                        <span class="facet-label">{ label || value }</span>&nbsp;<span class="facet-count">{ count }</span>
+                        <span class="facet-label" data-value="{ value }">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
                     </div>
+                    ...
                     -->
                 </es-facet-keywords>
 
@@ -51,20 +67,46 @@
                 <es-facet-keywords field="channel.webMaster"></es-facet-keywords>
 
                 <h3>Giorni</h3>
+                <!-- Componente per il filtro per date (variabile temporale)
+                     - field: campo su cui applicare il filtro
+                     - format: formato della stringa mostrata all'utente (strftime: https://samhuri.net/projects/strftime)
+                     - interval: estensione del bin della distribuzione (second, minute, hour, day, week, month, year) !!!DA VERIFICARE!!!
+                -->
                 <es-facet-datetimes format="%Y-%m-%d" field="pubStart" interval="day">
+                    <!-- Markup generato dal componente
+                         - disable: classe aggiunta alle voci con conteggio nullo
+                         - active: classe aggiunta alle voci selezionate (filtro attivo)
+                         - value: valore della variabile categoriale (parola)
+                         - label: stringa mostrata all'utente, il valore è formattato secondo il formato indicato
+                         - count: conteggio dei documenti per valore
+                    -->
                     <!--
                     <div class="facet-item { disable } { active }">
-                        <span class="facet-label">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
+                        <span class="facet-label" data-value="{ value }">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
                     </div>
+                    ...
                     -->
                 </es-facet-datetimes>
 
                 <h3>Numero</h3>
+                <!-- Componente per il filtro per numero (variabile numerica)
+                     - field: campo su cui applicare il filtro
+                     - format: formato della stringa mostrata all'utente (numeral: http://numeraljs.com/)
+                     - interval: estensione del bin della distribuzione
+                -->
                 <es-facet-numbers format="0,0" field="longitude" interval="1">
+                    <!-- Markup generato dal componente
+                         - disable: classe aggiunta alle voci con conteggio nullo
+                         - active: classe aggiunta alle voci selezionate (filtro attivo)
+                         - value: valore della variabile categoriale (parola)
+                         - label: stringa mostrata all'utente, il valore è formattato secondo il formato indicato
+                         - count: conteggio dei documenti per valore
+                    -->
                     <!--
                     <div class="facet-item { disable } { active }">
-                        <span class="facet-label">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
+                        <span class="facet-label" data-value="{ value }">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
                     </div>
+                    ...
                     -->
                 </es-facet-numbers>
 
@@ -78,7 +120,13 @@
 
             <div id="list-container">
                 <h3>Atti amministrativi</h3>
-                <es-list size=25 prev="Pagina precedente" next="Pagina successiva">
+                <!-- Componente per il rendering della lista dei risultati
+                     - size: numero di risultati per pagina
+                     - prev: etichetta per il controllo "pagina precedente"
+                     - next: etichetta per il controllo "pagina successiva"
+                -->
+                <es-list size="25" prev="Pagina precedente" next="Pagina successiva">
+                    <!-- Markup generato dal componente, di cui una parte è personalizzabile -->
                     <!--
                     <div class="list-item">
                     -->
@@ -90,12 +138,14 @@
                     <!--
                     </div>
                     <div>
-                        <span class="list-page">{ opts.prev }</span>
+                        <span class="list-page">{ prev }</span>
                         <span class="list-page">{ page }</span>
-                        <span class="list-page">{ opts.next }</span>
+                        ...
+                        <span class="list-page">{ next }</span>
                     </div>
                     -->
                 </es-list>
+
             </div>
 
         </section>
@@ -104,6 +154,7 @@
             <p>CC BY 2017 onData | Powered by NanoFlux Fusion + RiotJS + Elasticsearch</p>
         </footer>
 
+        <!-- I principali parametri di configurazione sono nel file config.js -->
         <script src="./config.js"></script>
         <script src="./js/bundle.js"></script>
 
