@@ -38,7 +38,6 @@
             tag.opts.field = tag.opts.field || "";
             tag.opts.interval = tag.opts.interval || "";
             tag.opts.format = tag.opts.format || "%c";
-            tag.opts.composition = tag.opts.composition || 'must';
             tag.opts.items = tag.opts.items || [];
         });
 
@@ -52,7 +51,7 @@
         tag.submit = function(e) {
             e.currentTarget.classList.toggle('active');
             var data = {};
-            data[tag.opts.composition+':'+tag.opts.type+':'+tag.opts.field+':'+tag.opts.interval] = tag.refs.input
+            data[tag.opts.type+':'+tag.opts.field+':'+tag.opts.interval] = tag.refs.input
                 .filter(function(el) { return el.classList.contains('active'); })
                 .map(function(el) { return el.dataset.value; });
             tag.trigger('submit',data);

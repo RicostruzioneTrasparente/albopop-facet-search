@@ -17,7 +17,7 @@ var initialState = {
 require('./tags/es-facet/es-facet-keywords.tag.html');
 var esFacetKeywordsTags = riot.mount('es-facet-keywords');
 _.forEach(esFacetKeywordsTags, function(t) {
-    initialState.query.terms[t.opts.composition+':'+t.opts.type+':'+t.opts.field] = [];
+    initialState.query.terms[t.opts.type+':'+t.opts.field] = [];
     t.on("submit", function(state) {
         search({ terms: state });
     });
@@ -26,7 +26,7 @@ _.forEach(esFacetKeywordsTags, function(t) {
 require('./tags/es-facet/es-facet-datetimes.tag.html');
 var esFacetDatetimesTags = riot.mount('es-facet-datetimes');
 _.forEach(esFacetDatetimesTags, function(t) {
-    initialState.query.terms[t.opts.composition+':'+t.opts.type+':'+t.opts.field+':'+t.opts.interval] = [];
+    initialState.query.terms[t.opts.type+':'+t.opts.field+':'+t.opts.interval] = [];
     t.on("submit", function(state) {
         search({ terms: state });
     });
@@ -35,7 +35,7 @@ _.forEach(esFacetDatetimesTags, function(t) {
 require('./tags/es-facet/es-facet-numbers.tag.html');
 var esFacetNumbersTags = riot.mount('es-facet-numbers');
 _.forEach(esFacetNumbersTags, function(t) {
-    initialState.query.terms[t.opts.composition+':'+t.opts.type+':'+t.opts.field+':'+t.opts.interval] = [];
+    initialState.query.terms[t.opts.type+':'+t.opts.field+':'+t.opts.interval] = [];
     t.on("submit", function(state) {
         search({ terms: state });
     });

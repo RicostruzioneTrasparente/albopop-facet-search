@@ -3,15 +3,20 @@ var _ = require('lodash');
 
 module.exports = function(match,fields,terms,size,from) {
 
-    var bool = {
-        must: [],
-        should: [],
-        must_not: [],
-        filter: {}
+    var query = {
+        bool: {
+            must: {
+                bool: {
+                    should: [],
+                    minimum_should_match: 1
+                }
+            },
+            filter: {}
+        }
     };
 
     if (match) {
-        bool.filter = { multi_match: { query: match, fields: fields } };
+        query.bool.filter = { multi_match: { query: match, fields: fields } };
     }
 
     if (!_.isEmpty(terms)) {
@@ -20,10 +25,9 @@ module.exports = function(match,fields,terms,size,from) {
         _.forOwn(terms, function(v,k,o) {
 
             var key = k.split(':'),
-                composition = key[0],
-                type = key[1],
-                name = key[2],
-                interval = key[3] || "";
+                type = key[0],
+                name = key[1],
+                interval = key[2] || "";
 
             switch (type) {
 
@@ -32,7 +36,7 @@ module.exports = function(match,fields,terms,size,from) {
                     if (!_.isEmpty(v)) {
                         var tobj = {};
                         tobj[name] = v;
-                        bool[composition].push({ terms: tobj });
+                        query.bool.must.bool.should.push({ terms: tobj });
                     }
                     break;
 
@@ -45,7 +49,7 @@ module.exports = function(match,fields,terms,size,from) {
                             lt: vi+'||+1'+interval[0],
                             format: 'epoch_millis'
                         };
-                        bool[composition].push({ range: tobj });
+                        query.bool.must.bool.should.push({ range: tobj });
                     });
                     break;
 
@@ -57,7 +61,7 @@ module.exports = function(match,fields,terms,size,from) {
                             gte: +vi,
                             lt: (+vi)+(+interval)
                         };
-                        bool[composition].push({ range: tobj });
+                        query.bool.must.bool.should.push({ range: tobj });
                     });
                     break;
 
@@ -66,16 +70,10 @@ module.exports = function(match,fields,terms,size,from) {
         });
     }
 
-    if (!_.isEmpty(bool.should)) {
-        bool.minimum_should_match = 1;
-    }
-
     var body = {
         size: size || 10,
         from: from || 0,
-        query: {
-            bool: bool
-        },
+        query: query,
         aggs: aggs
     };
 

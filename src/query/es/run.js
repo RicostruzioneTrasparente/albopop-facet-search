@@ -1,14 +1,14 @@
 /* Run ES Query */
 var _ = require('lodash');
+var elasticsearch = require('elasticsearch'),
+    client = new elasticsearch.Client({
+        host: window.ES_CONFIG ? window.ES_CONFIG.host : "localhost:9200"
+    });
+
 
 module.exports = function(match,fields,terms,size,from) {
 
     var buildQuery = require("./build");
-    var elasticsearch = require('elasticsearch'),
-        client = new elasticsearch.Client({
-            host: window.ES_CONFIG ? window.ES_CONFIG.host : "localhost:9200"
-        });
-
     var match = match || "",
         fields = fields || ['_all'],
         terms = terms || {};
@@ -22,7 +22,7 @@ module.exports = function(match,fields,terms,size,from) {
         var aggs = {};
         _.forOwn(terms, function(v,k,o) {
             var key = k.split(':'),
-                name = key[2];
+                name = key[1];
             aggs[name] = response.aggregations[name].buckets
         });
 
