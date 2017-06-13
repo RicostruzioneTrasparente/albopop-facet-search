@@ -57,11 +57,11 @@ NanoFlux.createFusionator({
     search: function(previousState, args){
         var arg = args[0] || {};
         return query(
-            arg.match || previousState.query.match,
-            arg.fields || previousState.query.fields,
+            !_.isUndefined(arg.match) ? arg.match : previousState.query.match,
+            !_.isUndefined(arg.fields) ? arg.fields : previousState.query.fields,
             _.defaults(arg.terms || {}, previousState.query.terms),
-            arg.size || previousState.query.size,
-            arg.from || previousState.query.from
+            !_.isUndefined(arg.size) ? arg.size : previousState.query.size,
+            !_.isUndefined(arg.from) ? arg.from : previousState.query.from
         );
 	}
 }, initialState);

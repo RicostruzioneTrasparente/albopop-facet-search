@@ -27,7 +27,9 @@ module.exports = function(match,fields,terms,size,from) {
             query: {
                 match: match,
                 fields: fields,
-                terms: terms
+                terms: terms,
+                size: size,
+                from: from
             },
             response: {
                 total: response.hits.total,

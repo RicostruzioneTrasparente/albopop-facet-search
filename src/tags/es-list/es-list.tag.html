@@ -51,7 +51,7 @@
             tag.root.querySelectorAll(".list-page")[page+1].classList.add("active");
             tag.refs.prev.dataset.value = Math.max(page - 1, 0);
             tag.refs.next.dataset.value = Math.min(page + 1, Math.floor(tag.opts.total / tag.opts.size));
-            tag.trigger('submit', { value: page });
+            tag.trigger('submit', { value: page*tag.opts.size });
             if (e) e.preventDefault();
         };
 

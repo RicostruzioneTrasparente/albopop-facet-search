@@ -20,7 +20,7 @@
                      - placeholder: come per il tag input
                      - value: valore iniziale
                 -->
-                <es-search fields="title,description" placeholder="Cerca..." value="terremoto">
+                <es-search fields="title,description" placeholder="Cerca..." value="">
                     <!-- Markup generato dal componente tra { } i valori degli attributi indicati
                     <form class="search-form">
                         <input class="search-input" placeholder="{ placeholder }" value="{ value }">
@@ -72,7 +72,7 @@
                      - format: formato della stringa mostrata all'utente (strftime: https://samhuri.net/projects/strftime)
                      - interval: estensione del bin della distribuzione (second, minute, hour, day, week, month, year) !!!DA VERIFICARE!!!
                 -->
-                <es-facet-datetimes format="%Y-%m-%d" field="pubStart" interval="day">
+                <!--<es-facet-datetimes format="%Y-%m-%d" field="pubStart" interval="day">-->
                     <!-- Markup generato dal componente
                          - disable: classe aggiunta alle voci con conteggio nullo
                          - active: classe aggiunta alle voci selezionate (filtro attivo)
@@ -86,7 +86,7 @@
                     </div>
                     ...
                     -->
-                </es-facet-datetimes>
+                    <!--</es-facet-datetimes>-->
 
                 <h3>Numero</h3>
                 <!-- Componente per il filtro per numero (variabile numerica)
@@ -94,7 +94,7 @@
                      - format: formato della stringa mostrata all'utente (numeral: http://numeraljs.com/)
                      - interval: estensione del bin della distribuzione
                 -->
-                <es-facet-numbers format="0,0" field="longitude" interval="1">
+                <!--<es-facet-numbers format="0,0" field="longitude" interval="1">-->
                     <!-- Markup generato dal componente
                          - disable: classe aggiunta alle voci con conteggio nullo
                          - active: classe aggiunta alle voci selezionate (filtro attivo)
@@ -108,7 +108,7 @@
                     </div>
                     ...
                     -->
-                </es-facet-numbers>
+                    <!--</es-facet-numbers>-->
 
             </div>
 

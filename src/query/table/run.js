@@ -1,4 +1,5 @@
 /* Run AlaSQL Queries */
+require('script-loader!../../../node_modules/xlsx/dist/xlsx.core.min.js');
 var _ = require('lodash'),
     alasql = require('alasql');
 
@@ -13,7 +14,7 @@ module.exports = function(match,fields,terms,size,from) {
     var table = options.type+"('"+options.file+"', {separator:'"+options.separator+"'})",
         where_match = _.join(
             _.map(fields, function(f) {
-                return f+" LIKE '"+match+"'";
+                return "`"+f+"` LIKE '"+match+"'";
             })," OR "
         ),
         where_terms = _.join(
@@ -25,7 +26,7 @@ module.exports = function(match,fields,terms,size,from) {
                     }
                 ),
                 function(t) {
-                    return t.field+" IN ("+_.join(_.map(t.values, function(v) { return "'"+v+"'"; }))+")";
+                    return "`"+t.field+"` IN ("+_.join(_.map(t.values, function(v) { return "'"+v+"'"; }))+")";
                 }
             )," AND "
         ),
@@ -34,21 +35,21 @@ module.exports = function(match,fields,terms,size,from) {
     var vterms = _.values(terms);
 
     var statements = _.concat(
-        "SELECT * FROM "+table+" WHERE "+where,
+        "SELECT * FROM "+table+" WHERE "+where+" LIMIT "+(size||10)+" OFFSET "+(from||0),
         _.map(vterms, function(v) {
             return _.join([
-                "SELECT "+v.field+" AS key, COUNT("+v.field+") AS doc_count",
+                "SELECT `"+v.field+"` AS key, COUNT(`"+v.field+"`) AS doc_count",
                 "FROM "+table,
                 "WHERE "+where,
-                "GROUP BY "+v.field,
-                "ORDER BY "+v.field+" ASC"
+                "GROUP BY `"+v.field+"`",
+                "ORDER BY `"+v.field+"` ASC"
             ]," ");
         })
     );
 
     console.log("queries", statements);
 
-    return alasql.promise(statements).then(function(response) {
+    return alasql(statements).then(function(response) {
 
         console.log(response);
         var aggs = {};
@@ -63,7 +64,9 @@ module.exports = function(match,fields,terms,size,from) {
             query: {
                 match: match,
                 fields: fields,
-                terms: terms
+                terms: terms,
+                size: size,
+                from: from
             },
             response: {
                 total: response[0].length,

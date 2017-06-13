@@ -20,7 +20,8 @@
     "nanoflux-fusion": "^0.6.0-beta",
     "numeral": "^2.0.6",
     "riot": "^3.6.0",
-    "strftime": "^0.10.0"
+    "strftime": "^0.10.0",
+    "xlsx": "^0.10.5"
   },
   "devDependencies": {
     "css-loader": "^0.26.1",

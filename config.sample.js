@@ -8,6 +8,9 @@ window.ES_CONFIG = {
         },
         table: {
             type: "CSV",
+            //type: "TSV",
+            //type: "JSON",// Only flat json
+            //type: "XLSX", // Also for ODS
             file: "./data/sample.csv",
             separator: ","
         }
