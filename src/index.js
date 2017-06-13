@@ -7,7 +7,12 @@ var _ = require('lodash');
 var NanoFlux = require('nanoflux-fusion'),
     fusionStore = NanoFlux.getFusionStore();
 
-var query = require("./query/es/run");
+var queries = {
+    es: require("./query/es/run"),
+    table: require("./query/table/run")
+};
+
+var query = queries[window.ES_CONFIG.backend];
 
 var initialState = {
     query: { match: "", fields: [], terms: {}, size: 10, from: 0 },

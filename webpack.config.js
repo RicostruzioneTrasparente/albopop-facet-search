@@ -15,6 +15,7 @@ module.exports = {
         })
     ],
     module: {
+        noParse: [/alasql/],
         rules: [
             // Loader for custom tag
             { test: /\.tag\.html$/, exclude: /node_modules/, loader: 'riot-tag-loader' },
@@ -26,7 +27,7 @@ module.exports = {
             { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file-loader?name=./assets/[name]/[hash].[ext]' },
             { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml&name=./assets/[name]/[hash].[ext]' },
             // Loader for images (output in assets/ dir)
-            { test: /\.(png|jpg|gif)$/, loader: "file-loader?name=./assets/[name].[ext]" }
+            { test: /\.(png|jpg|gif)$/, loader: "file-loader?name=./assets/[name].[ext]" },
         ]
     },
     node: {

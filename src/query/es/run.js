@@ -2,9 +2,8 @@
 var _ = require('lodash');
 var elasticsearch = require('elasticsearch'),
     client = new elasticsearch.Client({
-        host: window.ES_CONFIG ? window.ES_CONFIG.host : "localhost:9200"
+        host: window.ES_CONFIG ? window.ES_CONFIG.options.es.host : "localhost:9200"
     });
-
 
 module.exports = function(match,fields,terms,size,from) {
 
@@ -14,8 +13,8 @@ module.exports = function(match,fields,terms,size,from) {
         terms = terms || {};
 
     return client.search({
-        index: window.ES_CONFIG ? window.ES_CONFIG.index : 'my-index',
-        type: window.ES_CONFIG ? window.ES_CONFIG.type : 'my-type',
+        index: window.ES_CONFIG ? window.ES_CONFIG.options.es.index : 'my-index',
+        type: window.ES_CONFIG ? window.ES_CONFIG.options.es.type : 'my-type',
         body: buildQuery(match,fields,terms,size,from)
     }).then(function(response) {
 
@@ -32,7 +31,7 @@ module.exports = function(match,fields,terms,size,from) {
             },
             response: {
                 total: response.hits.total,
-                items: response.hits.hits.map(function(hit) {
+                items: _.map(response.hits.hits, function(hit) {
                     return hit['_source'];
                 }),
                 aggs: aggs
