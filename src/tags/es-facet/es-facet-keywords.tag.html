@@ -4,11 +4,12 @@
         each="{ opts.items }"
         ref="input"
         data-value="{ value }"
-        class="facet-item { disable: !count } { active: active }"
-        onclick="{ this.submit }"
+        class="facet-item { disable: !count || !parent.initial && !active } { active: active } { facet-item-na: !value }"
+        onclick="{ parent.submit }"
     >
-        <span class="facet-label">{ label || value }</span>&nbsp;<span class="facet-count">{ count }</span>
+        <span class="facet-label">{ label || value || parent.opts.na }</span>&nbsp;<span class="facet-count">{ count }</span>
     </div>
+    <div>Altro: { opts.missing }</div>
 
     <style>
         :scope .facet-item {
@@ -26,6 +27,9 @@
         :scope .facet-count:after {
             content: ')';
         }
+        :scope .facet-item-na {
+            font-style: italic;
+        }
     </style>
 
     <script>
@@ -36,6 +40,16 @@
             tag.opts.type = 'keywords';
             tag.opts.field = tag.opts.field || "";
             tag.opts.items = tag.opts.items || [];
+            tag.opts.size = +tag.opts.size || 10;
+            tag.opts.order = tag.opts.order ? tag.opts.order.split(':') : ["count","desc"];
+            tag.opts.na = tag.opts.na || "[ NA ]";
+            tag.opts.missing = 0;
+            tag.initial = true;
+        });
+
+        tag.on('update', function() {
+            tag.initial = !tag.opts.items.filter(function(el) { return el.active; }).length;
+            console.log(tag.opts);
         });
 
         tag.submit = function(e) {
@@ -43,6 +57,8 @@
             tag.trigger('submit', {
                 type: tag.opts.type,
                 field: tag.opts.field,
+                size: tag.opts.size,
+                order: tag.opts.order,
                 values: tag.refs.input
                     .filter(function(el) { return el.classList.contains('active'); })
                     .map(function(el) { return el.dataset.value; })

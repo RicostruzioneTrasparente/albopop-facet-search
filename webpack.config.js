@@ -9,10 +9,10 @@ module.exports = {
     },
     plugins: [
         // Minimization in production
-        new webpack.optimize.UglifyJsPlugin({
+        /*new webpack.optimize.UglifyJsPlugin({
             minimize: true,
             compress: { warnings: false }
-        })
+        })*/
     ],
     module: {
         noParse: [/alasql/],
@@ -38,6 +38,7 @@ module.exports = {
     devtool: 'source-map',
     devServer: {
         port: 8088,
-        disableHostCheck: true
+        disableHostCheck: true,
+        inline: true
     }
 };

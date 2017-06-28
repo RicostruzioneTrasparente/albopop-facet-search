@@ -30,6 +30,8 @@ _.forEach(esFacetTags, function(t) {
         type: t.opts.type,
         field: t.opts.field,
         interval: t.opts.interval,
+        size: t.opts.size,
+        order: t.opts.order,
         values: []
     };
     t.on("submit", function(state) {
@@ -72,16 +74,16 @@ function fillFacets(newState, currentState, actionName) {
 
     _.forOwn(currentState.response.aggs, function(v,k,o) {
 
-        var oldFacets = _.fromPairs(_.map(currentState.response.aggs[k], function(el) {
+        /*var oldFacets = _.fromPairs(_.map(currentState.response.aggs[k], function(el) {
             return [
                 el.key,
                 {
                     key: el.key,
-                    doc_count: 0,
+                    doc_count: el.doc_count,
                     active: false
                 }
             ];
-        }));
+        }));*/
 
         var newFacets = _.fromPairs(_.map(newState.response.aggs[k], function(el) {
             return [
@@ -94,7 +96,15 @@ function fillFacets(newState, currentState, actionName) {
             ];
         }));
 
-        newState.response.aggs[k] = _.orderBy(_.values(_.defaults(newFacets, oldFacets)),'key','asc');
+        var newAggs = [];
+        _.each(currentState.response.aggs[k], function(v,i) {
+            newAggs.push(newFacets[v.key] || { key: v.key, doc_count: v.doc_count, active: false });
+        });
+
+        newState.response.aggs[k] = newAggs;
+        //newState.response.aggs[k] = _.orderBy(_.values(_.defaults(newFacets, oldFacets)),'key','asc');
+        //newState.response.aggs[k] = _.orderBy(_.values(_.defaults(newFacets, oldFacets)),['doc_count','key'],['desc','asc']);
+        //newState.response.aggs[k] = _.values(_.defaults(newFacets, oldFacets));
 
     });
 
@@ -123,7 +133,8 @@ var subscription = fusionStore.subscribe(this, function(currentState) {
                         count: el.doc_count,
                         active: el.active
                     }
-                })
+                }),
+                missing: Math.abs(currentState.response.total - _.sumBy(currentState.response.aggs[t.opts.field], function(el) { return el.doc_count; }))
             }, t.opts)
         });
     });

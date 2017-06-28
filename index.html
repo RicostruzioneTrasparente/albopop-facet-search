@@ -34,6 +34,8 @@
                 <h3>Paesi</h3>
                 <!-- Componente per il filtro per parole (variabile categoriale)
                      - field: campo su cui applicare il filtro
+                     - size: numero massimo di termini visualizzati
+                     - order: ordinamento dei termini ("count:asc", "count:desc"*, "term:asc", "term:desc")
                 -->
                 <es-facet-keywords field="country">
                     <!-- Markup generato dal componente
@@ -52,19 +54,19 @@
                 </es-facet-keywords>
 
                 <h3>Regioni</h3>
-                <es-facet-keywords field="region"></es-facet-keywords>
+                <es-facet-keywords field="region" size="20"></es-facet-keywords>
 
                 <h3>Province</h3>
-                <es-facet-keywords field="province"></es-facet-keywords>
+                <es-facet-keywords field="province" size="110"></es-facet-keywords>
 
                 <h3>Comuni</h3>
-                <es-facet-keywords field="municipality"></es-facet-keywords>
+                <es-facet-keywords field="municipality" size="25"></es-facet-keywords>
 
                 <h3>Tipologie</h3>
-                <es-facet-keywords field="type"></es-facet-keywords>
+                <es-facet-keywords field="type" size="10" order="term:asc"></es-facet-keywords>
 
                 <h3>Curatori</h3>
-                <es-facet-keywords field="channel.webMaster"></es-facet-keywords>
+                <es-facet-keywords field="channel.webMaster" size="5"></es-facet-keywords>
 
                 <h3>Giorni</h3>
                 <!-- Componente per il filtro per date (variabile temporale)
@@ -72,7 +74,7 @@
                      - format: formato della stringa mostrata all'utente (strftime: https://samhuri.net/projects/strftime)
                      - interval: estensione del bin della distribuzione (second, minute, hour, day, week, month, year) !!!DA VERIFICARE!!!
                 -->
-                <!--<es-facet-datetimes format="%Y-%m-%d" field="pubStart" interval="day">-->
+                <es-facet-datetimes format="%Y-%m-%d" field="pubStart" interval="day">
                     <!-- Markup generato dal componente
                          - disable: classe aggiunta alle voci con conteggio nullo
                          - active: classe aggiunta alle voci selezionate (filtro attivo)
@@ -86,7 +88,7 @@
                     </div>
                     ...
                     -->
-                    <!--</es-facet-datetimes>-->
+                </es-facet-datetimes>
 
                 <h3>Numero</h3>
                 <!-- Componente per il filtro per numero (variabile numerica)
@@ -94,7 +96,7 @@
                      - format: formato della stringa mostrata all'utente (numeral: http://numeraljs.com/)
                      - interval: estensione del bin della distribuzione
                 -->
-                <!--<es-facet-numbers format="0,0" field="longitude" interval="1">-->
+                <es-facet-numbers format="0,0" field="longitude" interval="1">
                     <!-- Markup generato dal componente
                          - disable: classe aggiunta alle voci con conteggio nullo
                          - active: classe aggiunta alle voci selezionate (filtro attivo)
@@ -108,7 +110,7 @@
                     </div>
                     ...
                     -->
-                    <!--</es-facet-numbers>-->
+                </es-facet-numbers>
 
             </div>
 

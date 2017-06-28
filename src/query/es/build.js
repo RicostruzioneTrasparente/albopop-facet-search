@@ -27,7 +27,11 @@ module.exports = function(match,fields,terms,size,from) {
             switch (v.type) {
 
                 case 'keywords':
-                    aggs[v.field] = { terms: { field: v.field, order: { _term: 'asc' } } };
+                    var order = {},
+                        orderBy = v.order[0] || "_count",
+                        orderDirection = v.order[1] || "desc";
+                    order['_'+orderBy] = orderDirection;
+                    aggs[v.field] = { terms: { field: v.field, order: order, size: v.size } };
                     if (!_.isEmpty(v.values)) {
                         var tobj = {};
                         tobj[v.field] = v.values;
