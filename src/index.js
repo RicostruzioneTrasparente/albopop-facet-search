@@ -74,17 +74,6 @@ function fillFacets(newState, currentState, actionName) {
 
     _.forOwn(currentState.response.aggs, function(v,k,o) {
 
-        /*var oldFacets = _.fromPairs(_.map(currentState.response.aggs[k], function(el) {
-            return [
-                el.key,
-                {
-                    key: el.key,
-                    doc_count: el.doc_count,
-                    active: false
-                }
-            ];
-        }));*/
-
         var newFacets = _.fromPairs(_.map(newState.response.aggs[k], function(el) {
             return [
                 el.key,
@@ -98,13 +87,10 @@ function fillFacets(newState, currentState, actionName) {
 
         var newAggs = [];
         _.each(currentState.response.aggs[k], function(v,i) {
-            newAggs.push(newFacets[v.key] || { key: v.key, doc_count: v.doc_count, active: false });
+            newAggs.push(newFacets[v.key] || { key: v.key, doc_count: 0, active: false });
         });
 
         newState.response.aggs[k] = newAggs;
-        //newState.response.aggs[k] = _.orderBy(_.values(_.defaults(newFacets, oldFacets)),'key','asc');
-        //newState.response.aggs[k] = _.orderBy(_.values(_.defaults(newFacets, oldFacets)),['doc_count','key'],['desc','asc']);
-        //newState.response.aggs[k] = _.values(_.defaults(newFacets, oldFacets));
 
     });
 

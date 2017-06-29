@@ -1,34 +1,35 @@
 <es-facet-keywords>
 
-    <div
-        each="{ opts.items }"
-        ref="input"
-        data-value="{ value }"
-        class="facet-item { disable: !count || !parent.initial && !active } { active: active } { facet-item-na: !value }"
-        onclick="{ parent.submit }"
-    >
-        <span class="facet-label">{ label || value || parent.opts.na }</span>&nbsp;<span class="facet-count">{ count }</span>
+    <div class="panel panel-default">
+
+        <div class="panel-heading">
+            <h4>{ opts.title }</h4>
+        </div>
+
+        <button
+            type="button"
+            each="{ opts.items }"
+            ref="input"
+            data-value="{ value }"
+            class="facet-item list-group-item { disabled: !count || !parent.initial && !active } { active: active } { facet-item-na: !value }"
+            onclick="{ parent.submit }"
+        >
+            <span class="facet-label">{ label || value || parent.opts.na }</span>
+            <span class="facet-count badge">{ count }</span>
+        </button>
+
+        <div class="panel-footer">
+            <p if={ opts.missing }>Altro: { opts.missing }</p>
+        </div>
+
     </div>
-    <div>Altro: { opts.missing }</div>
 
     <style>
-        :scope .facet-item {
-            cursor: pointer;
-        }
-        :scope .active {
-            font-weight: bold;
-        }
-        :scope .disable {
-            color: lightgrey;
-        }
-        :scope .facet-count:before {
-            content: '(';
-        }
-        :scope .facet-count:after {
-            content: ')';
-        }
         :scope .facet-item-na {
             font-style: italic;
+        }
+        :scope .disabled {
+            cursor: pointer !important;
         }
     </style>
 
