@@ -6,6 +6,7 @@
             <h4>{ opts.title }</h4>
         </div>
 
+        <div class="panel-body">
         <button
             type="button"
             each="{ opts.items }"
@@ -17,6 +18,7 @@
             <span class="facet-label">{ label || value || parent.opts.na }</span>
             <span class="facet-count badge">{ count }</span>
         </button>
+        </div>
 
         <div class="panel-footer">
             <p if={ opts.missing }>Altro: { opts.missing }</p>
@@ -31,6 +33,13 @@
         :scope .disabled {
             cursor: pointer !important;
         }
+        :scope .panel-body {
+            padding: 0;
+            overflow-y: auto;
+        }
+        :scope .panel-body .list-group-item {
+            border-radius: 0;
+        }
     </style>
 
     <script>
@@ -42,6 +51,7 @@
             tag.opts.field = tag.opts.field || "";
             tag.opts.items = tag.opts.items || [];
             tag.opts.size = +tag.opts.size || 10;
+            tag.opts.height = +tag.opts.height || 0;
             tag.opts.order = tag.opts.order ? tag.opts.order.split(':') : ["count","desc"];
             tag.opts.na = tag.opts.na || "[ NA ]";
             tag.opts.missing = 0;
@@ -50,10 +60,16 @@
 
         tag.on('update', function() {
             tag.initial = !tag.opts.items.filter(function(el) { return el.active; }).length;
-            console.log(tag.opts);
+        });
+
+        tag.on('updated', function() {
+            if (tag.opts.height) {
+                tag.root.querySelector('.panel-body').style["max-height"] = tag.opts.height*tag.root.querySelector('.panel-body .list-group-item').offsetHeight+"px";
+            }
         });
 
         tag.submit = function(e) {
+            if (e) e.preventDefault();
             e.currentTarget.classList.toggle('active');
             tag.trigger('submit', {
                 type: tag.opts.type,
@@ -64,7 +80,6 @@
                     .filter(function(el) { return el.classList.contains('active'); })
                     .map(function(el) { return el.dataset.value; })
             });
-            if (e) e.preventDefault();
         };
 
     </script>
