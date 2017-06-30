@@ -3,7 +3,10 @@
     <div class="panel panel-default">
 
         <div class="panel-heading">
-            <h4>{ opts.title }</h4>
+            <h4>
+                <span class="facet-title">{ opts.title }</span>
+                <span class="facet-reset glyphicon glyphicon-repeat pull-right" onclick="{ this.reset }"></span>
+            </h4>
         </div>
 
         <div class="panel-body">
@@ -30,12 +33,15 @@
         :scope .facet-item-na {
             font-style: italic;
         }
+        :scope .facet-reset {
+            cursor: pointer;
+        }
         :scope .disabled {
-            cursor: pointer !important;
+            display: none;
         }
         :scope .panel-body {
             padding: 0;
-            overflow-y: auto;
+            overflow-y: scroll;
         }
         :scope .panel-body .list-group-item {
             border-radius: 0;
@@ -51,11 +57,12 @@
             tag.opts.field = tag.opts.field || "";
             tag.opts.items = tag.opts.items || [];
             tag.opts.size = +tag.opts.size || 10;
-            tag.opts.height = +tag.opts.height || 0;
+            tag.opts.height = +tag.opts.height || 5;
             tag.opts.order = tag.opts.order ? tag.opts.order.split(':') : ["count","desc"];
             tag.opts.na = tag.opts.na || "[ NA ]";
             tag.opts.missing = 0;
             tag.initial = true;
+            tag.itemHeight = 0;
         });
 
         tag.on('update', function() {
@@ -63,14 +70,18 @@
         });
 
         tag.on('updated', function() {
-            if (tag.opts.height) {
-                tag.root.querySelector('.panel-body').style["max-height"] = tag.opts.height*tag.root.querySelector('.panel-body .list-group-item').offsetHeight+"px";
+            if (tag.opts.height && !tag.itemHeight) {
+                tag.itemHeight = tag.root.querySelector('.panel-body .list-group-item').offsetHeight;
+                tag.root.querySelector('.panel-body').style["height"] = tag.opts.height * tag.itemHeight+"px";
             }
         });
 
         tag.submit = function(e) {
-            if (e) e.preventDefault();
-            e.currentTarget.classList.toggle('active');
+            if (e) {
+              e.preventDefault();
+              e.preventUpdate = true;
+              e.currentTarget.classList.toggle('active');
+            }
             tag.trigger('submit', {
                 type: tag.opts.type,
                 field: tag.opts.field,
@@ -81,6 +92,13 @@
                     .map(function(el) { return el.dataset.value; })
             });
         };
+
+        tag.reset = function(e) {
+            tag.refs.input.forEach(function(el) {
+                el.classList.remove('active');
+            });
+            tag.submit();
+        }
 
     </script>
 

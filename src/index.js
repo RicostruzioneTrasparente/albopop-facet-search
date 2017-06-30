@@ -15,7 +15,7 @@ var queries = {
 var query = queries[window.ES_CONFIG.backend];
 
 var initialState = {
-    query: { match: "", fields: [], terms: {}, size: 10, from: 0 },
+    query: { match: "", fields: [], terms: {}, facet: "", size: 10, from: 0 },
     response: { total: 0, items: [], aggs: {} }
 };
 
@@ -37,7 +37,7 @@ _.forEach(esFacetTags, function(t) {
     t.on("submit", function(state) {
         var tobj = {};
         tobj[t.opts.field] = state;
-        search({ terms: tobj });
+        search({ terms: tobj, facet: !_.isEmpty(state.values) ? t.opts.type+':'+t.opts.field : "" });
     });
 });
 
@@ -62,6 +62,7 @@ NanoFlux.createFusionator({
             !_.isUndefined(arg.match) ? arg.match : previousState.query.match,
             !_.isUndefined(arg.fields) ? arg.fields : previousState.query.fields,
             _.defaults(arg.terms || {}, previousState.query.terms),
+            !_.isUndefined(arg.facet) ? arg.facet : previousState.query.facet,
             !_.isUndefined(arg.size) ? arg.size : previousState.query.size,
             !_.isUndefined(arg.from) ? arg.from : previousState.query.from
         );
@@ -111,18 +112,20 @@ var subscription = fusionStore.subscribe(this, function(currentState) {
     });
 
     _.forEach(esFacetTags, function(t) {
-        t.update({
-            opts: _.defaults({
-                items: _.map(currentState.response.aggs[t.opts.field], function(el) {
-                    return {
-                        value: el.key,
-                        count: el.doc_count,
-                        active: el.active
-                    }
-                }),
-                missing: Math.abs(currentState.response.total - _.sumBy(currentState.response.aggs[t.opts.field], function(el) { return el.doc_count; }))
-            }, t.opts)
-        });
+        if (t.opts.type+':'+t.opts.field !== currentState.query.facet) {
+            t.update({
+                opts: _.defaults({
+                    items: _.map(currentState.response.aggs[t.opts.field], function(el) {
+                        return {
+                            value: el.key,
+                            count: el.doc_count,
+                            active: el.active
+                        }
+                    }),
+                    missing: Math.abs(currentState.response.total - _.sumBy(currentState.response.aggs[t.opts.field], function(el) { return el.doc_count; }))
+                }, t.opts)
+            });
+        }
     });
 
 });
