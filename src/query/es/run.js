@@ -1,11 +1,12 @@
 /* Run ES Query */
-var _ = require('lodash');
-var elasticsearch = require('elasticsearch'),
-    client = new elasticsearch.Client({
-        host: window.ES_CONFIG ? window.ES_CONFIG.options.es.host : "localhost:9200"
-    });
+var _ = require('lodash'),
+    elasticsearch = require('elasticsearch');
 
 module.exports = function(match,fields,terms,facet,size,from) {
+
+    var client = new elasticsearch.Client({
+        host: window.ES_CONFIG ? window.ES_CONFIG.options.es.host : "localhost:9200"
+    });
 
     var buildQuery = require("./build");
     var match = match || "",

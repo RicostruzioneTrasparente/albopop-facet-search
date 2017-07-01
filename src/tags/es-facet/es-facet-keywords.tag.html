@@ -70,7 +70,7 @@
         });
 
         tag.on('updated', function() {
-            if (tag.opts.height && !tag.itemHeight) {
+            if (tag.opts.height && !tag.itemHeight && tag.opts.items.length) {
                 tag.itemHeight = tag.root.querySelector('.panel-body .list-group-item').offsetHeight;
                 tag.root.querySelector('.panel-body').style["height"] = tag.opts.height * tag.itemHeight+"px";
             }

@@ -5,13 +5,13 @@ var _ = require('lodash'),
 
 module.exports = function(match,fields,terms,facet,size,from) {
 
-    var match = match || "",
-        fields = fields || ['_all'],
-        terms = terms || {};
-
     var options = window.ES_CONFIG.options.table;
 
-    var table_params = options.type === 'CSV' ? ", {separator:'"+options.separator||","+"'}" : "",
+    var match = match || "",
+        fields = fields ? _.map(function(f) { return f.replace(/[\.]/g, (options.type === 'JSON' ? '->' : '.')); }) : [],
+        terms = terms || {};
+
+    var table_params = options.type === 'CSV' ? ", {separator:'"+(options.separator||",")+"'}" : "",
         table = options.type+"('"+options.file+"'"+table_params+")",
         where_match = _.join(
             _.map(fields, function(f) {
@@ -27,7 +27,8 @@ module.exports = function(match,fields,terms,facet,size,from) {
                     }
                 ),
                 function(t) {
-                    return "`"+t.field+"` IN ("+_.join(_.map(t.values, function(v) { return "'"+v+"'"; }))+")";
+                    var field = t.field.replace(/[\.]/g, (options.type === 'JSON' ? '->' : '.'));
+                    return "`"+field+"` IN ("+_.join(_.map(t.values, function(v) { return "'"+v+"'"; }))+")";
                 }
             )," AND "
         ),
@@ -36,13 +37,15 @@ module.exports = function(match,fields,terms,facet,size,from) {
     var vterms = _.values(terms);
 
     var statements = _.concat(
+        "SELECT * FROM "+table+" WHERE "+where,
         "SELECT * FROM "+table+" WHERE "+where+" LIMIT "+(size||10)+" OFFSET "+(from||0),
         _.map(vterms, function(v) {
+            var field = v.field.replace(/[\.]/g, (options.type === 'JSON' ? '->' : '.'));
             return _.join([
-                "SELECT `"+v.field+"` AS key, COUNT(`"+v.field+"`) AS doc_count",
+                "SELECT `"+field+"` AS key, COUNT(`"+field+"`) AS doc_count",
                 "FROM "+table,
                 "WHERE "+where,
-                "GROUP BY `"+v.field+"`",
+                "GROUP BY `"+field+"`",
                 "ORDER BY doc_count DESC"
             ]," ");
         })
@@ -56,7 +59,7 @@ module.exports = function(match,fields,terms,facet,size,from) {
         var aggs = {};
         _.forEach(vterms, function(v,i) {
             aggs[v.field] = _.filter(
-                response[i+1],
+                response[i+2],
                 function(b) { return !_.isUndefined(b.key); }
             );
         });
@@ -72,7 +75,7 @@ module.exports = function(match,fields,terms,facet,size,from) {
             },
             response: {
                 total: response[0].length,
-                items: response[0],
+                items: response[1],
                 aggs: aggs
             }
         };
