@@ -1,34 +1,50 @@
 <es-facet-keywords>
 
-    <div
-        each="{ opts.items }"
-        ref="input"
-        data-value="{ value }"
-        class="facet-item { disable: !count || !parent.initial && !active } { active: active } { facet-item-na: !value }"
-        onclick="{ parent.submit }"
-    >
-        <span class="facet-label">{ label || value || parent.opts.na }</span>&nbsp;<span class="facet-count">{ count }</span>
+    <div class="panel panel-default">
+
+        <div class="panel-heading">
+            <h4>
+                <span class="facet-title">{ opts.title }</span>
+                <span class="facet-reset glyphicon glyphicon-repeat pull-right" onclick="{ this.reset }"></span>
+            </h4>
+        </div>
+
+        <div class="panel-body">
+        <button
+            type="button"
+            each="{ opts.items }"
+            ref="input"
+            data-value="{ value }"
+            class="facet-item list-group-item { disabled: !count || !parent.initial && !active } { active: active } { facet-item-na: !value }"
+            onclick="{ parent.submit }"
+        >
+            <span class="facet-label">{ label || value || parent.opts.na }</span>
+            <span class="facet-count badge">{ count }</span>
+        </button>
+        </div>
+
+        <div class="panel-footer">
+            <p if={ opts.missing }>Altro: { opts.missing }</p>
+        </div>
+
     </div>
-    <div>Altro: { opts.missing }</div>
 
     <style>
-        :scope .facet-item {
-            cursor: pointer;
-        }
-        :scope .active {
-            font-weight: bold;
-        }
-        :scope .disable {
-            color: lightgrey;
-        }
-        :scope .facet-count:before {
-            content: '(';
-        }
-        :scope .facet-count:after {
-            content: ')';
-        }
         :scope .facet-item-na {
             font-style: italic;
+        }
+        :scope .facet-reset {
+            cursor: pointer;
+        }
+        :scope .disabled {
+            display: none;
+        }
+        :scope .panel-body {
+            padding: 0;
+            overflow-y: scroll;
+        }
+        :scope .panel-body .list-group-item {
+            border-radius: 0;
         }
     </style>
 
@@ -41,19 +57,31 @@
             tag.opts.field = tag.opts.field || "";
             tag.opts.items = tag.opts.items || [];
             tag.opts.size = +tag.opts.size || 10;
+            tag.opts.height = +tag.opts.height || 5;
             tag.opts.order = tag.opts.order ? tag.opts.order.split(':') : ["count","desc"];
             tag.opts.na = tag.opts.na || "[ NA ]";
             tag.opts.missing = 0;
             tag.initial = true;
+            tag.itemHeight = 0;
         });
 
         tag.on('update', function() {
             tag.initial = !tag.opts.items.filter(function(el) { return el.active; }).length;
-            console.log(tag.opts);
+        });
+
+        tag.on('updated', function() {
+            if (tag.opts.height && !tag.itemHeight) {
+                tag.itemHeight = tag.root.querySelector('.panel-body .list-group-item').offsetHeight;
+                tag.root.querySelector('.panel-body').style["height"] = tag.opts.height * tag.itemHeight+"px";
+            }
         });
 
         tag.submit = function(e) {
-            e.currentTarget.classList.toggle('active');
+            if (e) {
+              e.preventDefault();
+              e.preventUpdate = true;
+              e.currentTarget.classList.toggle('active');
+            }
             tag.trigger('submit', {
                 type: tag.opts.type,
                 field: tag.opts.field,
@@ -63,8 +91,14 @@
                     .filter(function(el) { return el.classList.contains('active'); })
                     .map(function(el) { return el.dataset.value; })
             });
-            if (e) e.preventDefault();
         };
+
+        tag.reset = function(e) {
+            tag.refs.input.forEach(function(el) {
+                el.classList.remove('active');
+            });
+            tag.submit();
+        }
 
     </script>
 

@@ -1,24 +1,17 @@
 <es-list>
 
-    <div each="{ opts.items }" class="list-item"><yield/></div>
-    <div>
-        <span ref="prev" class="list-page" onclick="{ this.submit }" data-value="0">{ opts.prev }</span>
-        <span each="{ page in opts.pages }" class="list-page" data-value="{ page }" onclick="{ this.submit }">{ page+1 }</span>
-        <span ref="next" class="list-page" onclick="{ this.submit }" data-value="1">{ opts.next }</span>
-    </div>
+    <div each="{ opts.items }" class="list-item panel panel-default"><yield/></div>
+    <nav>
+        <ul class="pagination pagination-sm">
+            <li class="list-page" ref="prev" data-value="0"><a href="#" onclick="{ this.submit }"><span>{ opts.prev }</span></a></li>
+            <li each="{ page in opts.pages }" class="list-page" data-value="{ page }"><a onclick="{ this.submit }"><span>{ page+1 }</span></a></li>
+            <li class="list-page" ref="next" data-value="1"><a href="#" onclick="{ this.submit }"><span>{ opts.next }</span></a></li>
+        </ul>
+    </nav>
 
     <style>
         :scope .list-page {
             cursor: pointer;
-        }
-        :scope .active {
-            font-weight: bold;
-        }
-        :scope .list-page:after {
-            content: ' | ';
-        }
-        :scope .list-page:last-child:after {
-            content: '';
         }
     </style>
 
@@ -44,7 +37,7 @@
         });
 
         tag.submit = function(e) {
-            var page = +e.currentTarget.dataset.value;
+            var page = +e.currentTarget.parentNode.dataset.value;
             tag.root.querySelectorAll(".active").forEach(function(el) {
                 el.classList.remove("active");
             });

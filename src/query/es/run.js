@@ -5,7 +5,7 @@ var elasticsearch = require('elasticsearch'),
         host: window.ES_CONFIG ? window.ES_CONFIG.options.es.host : "localhost:9200"
     });
 
-module.exports = function(match,fields,terms,size,from) {
+module.exports = function(match,fields,terms,facet,size,from) {
 
     var buildQuery = require("./build");
     var match = match || "",
@@ -28,6 +28,7 @@ module.exports = function(match,fields,terms,size,from) {
                 match: match,
                 fields: fields,
                 terms: terms,
+                facet: facet,
                 size: size,
                 from: from
             },

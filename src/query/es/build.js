@@ -5,12 +5,7 @@ module.exports = function(match,fields,terms,size,from) {
 
     var query = {
         bool: {
-            must: {
-                bool: {
-                    should: [],
-                    minimum_should_match: 1
-                }
-            },
+            must: [],
             filter: {}
         }
     };
@@ -35,7 +30,7 @@ module.exports = function(match,fields,terms,size,from) {
                     if (!_.isEmpty(v.values)) {
                         var tobj = {};
                         tobj[v.field] = v.values;
-                        query.bool.must.bool.should.push({ terms: tobj });
+                        query.bool.must.push({ terms: tobj });
                     }
                     break;
 

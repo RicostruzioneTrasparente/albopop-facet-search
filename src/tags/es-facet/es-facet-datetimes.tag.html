@@ -4,7 +4,7 @@
         each="{ opts.items }"
         ref="input"
         data-value="{ value }"
-        class="facet-item { disable: !count } { active: active }"
+        class="facet-item { disabled: !count } { active: active }"
         onclick="{ this.submit }"
     >
         <span class="facet-label">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
@@ -17,8 +17,9 @@
         :scope .active {
             font-weight: bold;
         }
-        :scope .disable {
+        :scope .disabled {
             color: lightgrey;
+            display: none;
         }
         :scope .facet-count:before {
             content: '(';
