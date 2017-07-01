@@ -1,5 +1,6 @@
 /* Run AlaSQL Queries */
 require('script-loader!../../../node_modules/xlsx/dist/xlsx.core.min.js');
+require('script-loader!../../../node_modules/tabletop/src/tabletop.min.js');
 var _ = require('lodash'),
     alasql = require('alasql');
 

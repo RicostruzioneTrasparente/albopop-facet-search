@@ -21,6 +21,7 @@
     "numeral": "^2.0.6",
     "riot": "^3.6.0",
     "strftime": "^0.10.0",
+    "tabletop": "^1.5.2",
     "xlsx": "^0.10.5"
   },
   "devDependencies": {
