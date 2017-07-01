@@ -3,7 +3,7 @@ require('script-loader!../../../node_modules/xlsx/dist/xlsx.core.min.js');
 var _ = require('lodash'),
     alasql = require('alasql');
 
-module.exports = function(match,fields,terms,size,from) {
+module.exports = function(match,fields,terms,facet,size,from) {
 
     var match = match || "",
         fields = fields || ['_all'],
@@ -11,10 +11,11 @@ module.exports = function(match,fields,terms,size,from) {
 
     var options = window.ES_CONFIG.options.table;
 
-    var table = options.type+"('"+options.file+"', {separator:'"+options.separator+"'})",
+    var table_params = options.type === 'CSV' ? ", {separator:'"+options.separator||","+"'}" : "",
+        table = options.type+"('"+options.file+"'"+table_params+")",
         where_match = _.join(
             _.map(fields, function(f) {
-                return "`"+f+"` LIKE '"+match+"'";
+                return "`"+f+"` LIKE '%"+match+"%'";
             })," OR "
         ),
         where_terms = _.join(
@@ -42,7 +43,7 @@ module.exports = function(match,fields,terms,size,from) {
                 "FROM "+table,
                 "WHERE "+where,
                 "GROUP BY `"+v.field+"`",
-                "ORDER BY `"+v.field+"` ASC"
+                "ORDER BY doc_count DESC"
             ]," ");
         })
     );
@@ -65,6 +66,7 @@ module.exports = function(match,fields,terms,size,from) {
                 match: match,
                 fields: fields,
                 terms: terms,
+                facet: facet,
                 size: size,
                 from: from
             },
