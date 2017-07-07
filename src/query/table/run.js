@@ -16,7 +16,7 @@ module.exports = (function() {
     function process(match,fields,terms,facet,size,from) {
 
         var match = match || "",
-            fields = fields ? _.map(function(f) { return f.replace(/[\.]/g, (options.type === 'JSON' ? '->' : '.')); }) : [],
+            fields = fields ? _.map(fields, function(f) { return f.replace(/[\.]/g, (options.type === 'JSON' ? '->' : '.')); }) : [],
             terms = terms || {};
 
         var where_match = _.join(
@@ -43,7 +43,6 @@ module.exports = (function() {
         var vterms = _.values(terms);
 
         var statements = _.concat(
-            [["SELECT * FROM ? WHERE "+where, [data]]],
             [["SELECT * FROM ? WHERE "+where+" LIMIT "+(size||10)+" OFFSET "+(from||0), [data]]],
             _.map(vterms, function(v) {
                 var field = v.field.replace(/[\.]/g, (options.type === 'JSON' ? '->' : '.'));
@@ -61,11 +60,10 @@ module.exports = (function() {
 
         return alasql(statements).then(function(response) {
 
-            console.log(response);
             var aggs = {};
             _.forEach(vterms, function(v,i) {
                 aggs[v.field] = _.filter(
-                    response[i+2],
+                    response[i+1],
                     function(b) { return !_.isUndefined(b.key); }
                 );
             });
@@ -80,8 +78,8 @@ module.exports = (function() {
                     from: from
                 },
                 response: {
-                    total: response[0].length,
-                    items: response[1],
+                    total: data.length,
+                    items: response[0],
                     aggs: aggs
                 }
             };

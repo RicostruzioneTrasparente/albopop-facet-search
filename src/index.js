@@ -43,7 +43,7 @@ _.forEach(esFacetTags, function(t) {
 
 require('./tags/es-search/');
 var esSearchTags = riot.mount('es-search');
-initialState.query.fields = esSearchTags[0].opts.fields ? esSearchTags[0].opts.fields.split(',') : [];
+initialState.query.fields = esSearchTags[0].opts.fields || [];
 esSearchTags[0].on("submit", function(state) {
     search({ match: state.value });
 });
@@ -55,6 +55,7 @@ esListTags[0].on("submit", function(state) {
     search({ from: state.value });
 });
 
+console.log("initialState",initialState);
 NanoFlux.createFusionator({
     search: function(previousState, args){
         var arg = args[0] || {};
