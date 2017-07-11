@@ -3,9 +3,13 @@
     <div each="{ opts.items }" class="list-item panel panel-default"><yield/></div>
     <nav>
         <ul class="pagination pagination-sm">
-            <li class="list-page" ref="prev" data-value="0"><a href="#" onclick="{ this.submit }"><span>{ opts.prev }</span></a></li>
-            <li each="{ page in opts.pages }" class="list-page" data-value="{ page }"><a onclick="{ this.submit }"><span>{ page+1 }</span></a></li>
-            <li class="list-page" ref="next" data-value="1"><a href="#" onclick="{ this.submit }"><span>{ opts.next }</span></a></li>
+            <li class="list-page" ref="first" data-value="0"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-fast-backward"></span></a></li>
+            <li class="list-page" ref="fastPrev" data-value="0"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-backward"></span></a></li>
+            <li class="list-page" ref="prev" data-value="0"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+            <li each="{ page in opts.pages }" class="list-page list-page-number" data-value="{ page }"><a onclick="{ this.submit }"><span>{ page+1 }</span></a></li>
+            <li class="list-page" ref="next" data-value="1"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+            <li class="list-page" ref="fastNext" data-value="{ opts.maxPages-1 }"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-forward"></span></a></li>
+            <li class="list-page" ref="last" data-value="1"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-fast-forward"></span></a></li>
         </ul>
     </nav>
 
@@ -21,29 +25,54 @@
 
         tag.on('mount', function() {
             tag.opts.size = +tag.opts.size || 10;
-            tag.opts.prev = tag.opts.prev || "Previous";
-            tag.opts.next = tag.opts.next || "Next";
+            tag.opts.maxPages = 5;
         });
 
         tag.on('update', function() {
-            var num_pages = Math.floor(tag.opts.total / tag.opts.size) + 1;
-            tag.opts.pages = Array.apply(null, Array(num_pages)).map(function (_, i) {return i;});
+            tag.opts.numPages = Math.floor(tag.opts.total / tag.opts.size) + 1;
+            tag.opts.pages = Array.apply(null, Array(tag.opts.numPages)).map(function (_, i) {return i;});
         });
 
         tag.on('updated', function() {
+
             if (!tag.root.querySelectorAll(".active").length) {
-                tag.root.querySelectorAll(".list-page")[1].classList.add("active");
+                tag.root.querySelector(".list-page-number").classList.add("active");
             }
+
+            var pages = tag.root.querySelectorAll(".list-page-number"),
+                currentPage = tag.root.querySelector(".list-page-number.active");
+                currentPageNumber = +currentPage.dataset.value;
+
+            if (!currentPageNumber || !((currentPageNumber+1)%tag.opts.maxPages)) {
+                pages.forEach(function(el) {
+                    var pageNumber = +el.dataset.value;
+                    if (pageNumber < currentPageNumber - tag.opts.maxPages) {
+                        el.classList.add("hidden");
+                    }
+                    if (pageNumber >= currentPageNumber - tag.opts.maxPages && pageNumber <= currentPageNumber + tag.opts.maxPages) {
+                        el.classList.remove("hidden");
+                    }
+                    if (pageNumber > currentPageNumber + tag.opts.maxPages) {
+                        el.classList.add("hidden");
+                    }
+                });
+            }
+
+            tag.refs.last.dataset.value = tag.opts.numPages-1;
+
         });
 
         tag.submit = function(e) {
-            var page = +e.currentTarget.parentNode.dataset.value;
+            var page = Math.min(+e.currentTarget.parentNode.dataset.value,tag.opts.numPages-1);
             tag.root.querySelectorAll(".active").forEach(function(el) {
                 el.classList.remove("active");
             });
-            tag.root.querySelectorAll(".list-page")[page+1].classList.add("active");
+            tag.root.querySelectorAll(".list-page-number")[page].classList.add("active");
+            tag.refs.fastPrev.dataset.value = Math.max(page - page%tag.opts.maxPages - 1, 0);
             tag.refs.prev.dataset.value = Math.max(page - 1, 0);
-            tag.refs.next.dataset.value = Math.min(page + 1, Math.floor(tag.opts.total / tag.opts.size));
+            tag.refs.next.dataset.value = Math.min(page + 1, tag.opts.numPages - 1);
+            console.log(page,tag.opts.maxPages,page%tag.opts.maxPages);
+            tag.refs.fastNext.dataset.value = Math.min(page - page%tag.opts.maxPages - 1 + ((page+1)%tag.opts.maxPages?1:2)*tag.opts.maxPages, tag.opts.numPages - 1);
             tag.trigger('submit', { value: page*tag.opts.size });
             if (e) e.preventDefault();
         };
