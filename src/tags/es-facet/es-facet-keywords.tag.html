@@ -60,6 +60,7 @@
             tag.opts.height = +tag.opts.height || 5;
             tag.opts.order = tag.opts.order ? tag.opts.order.split(':') : ["count","desc"];
             tag.opts.na = tag.opts.na || "[ NA ]";
+            tag.opts.separator = tag.opts.separator || "";
             tag.opts.missing = 0;
             tag.initial = true;
             tag.itemHeight = 0;
@@ -87,6 +88,7 @@
                 field: tag.opts.field,
                 size: tag.opts.size,
                 order: tag.opts.order,
+                separator: tag.opts.separator,
                 values: tag.refs.input
                     .filter(function(el) { return el.classList.contains('active'); })
                     .map(function(el) { return el.dataset.value; })

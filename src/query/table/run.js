@@ -6,7 +6,7 @@ var _ = require('lodash'),
 
 module.exports = (function() {
 
-    var data;
+    var data, tags = [];
 
     var options = window.ES_CONFIG.options.table;
 
@@ -34,7 +34,22 @@ module.exports = (function() {
                     ),
                     function(t) {
                         var field = t.field.replace(/[\.]/g, (options.type === 'JSON' ? '->' : '.'));
-                        return "`"+field+"` IN ("+_.join(_.map(t.values, function(v) { return "'"+v+"'"; }))+")";
+                        if (t.separator) {
+                            return _.join(
+                                _.map(
+                                    t.values,
+                                    function(v) {
+                                        return ""+
+                                            "`"+field+"` LIKE '%"+t.separator+v+t.separator+"%'"+
+                                            " OR `"+field+"` LIKE '%"+t.separator+v+"%'"+
+                                            " OR `"+field+"` LIKE '%"+v+t.separator+"%'";
+                                    }
+                                ),
+                                " OR "
+                            )
+                        } else {
+                            return "`"+field+"` IN ("+_.join(_.map(t.values, function(v) { return "'"+v+"'"; }))+")";
+                        }
                     }
                 )," AND "
             ),
@@ -52,12 +67,11 @@ module.exports = (function() {
                     "WHERE "+where,
                     "GROUP BY `"+field+"`",
                     "ORDER BY doc_count DESC"
-                ]," "), [data]];
+                ]," "), [v.separator ? tags : data]];
             })
         );
 
         console.log("queries", statements);
-
         return alasql(statements).then(function(response) {
 
             var aggs = {};
@@ -95,6 +109,15 @@ module.exports = (function() {
         if (_.isUndefined(data)) {
             return alasql.promise("SELECT * FROM "+table).then(function(response) {
                 data = response;
+                _.each(_.filter(_.values(terms), function(term) { return term.separator; }), function(term) {
+                    _.each(response, function(el) {
+                        _.each(el[term.field].split(term.separator), function(tag) {
+                            var item = _.cloneDeep(el);
+                            item[term.field] = tag;
+                            tags.push(item);
+                        });
+                    });
+                });
                 return process(match,fields,terms,facet,size,from);
             });
         } else {
