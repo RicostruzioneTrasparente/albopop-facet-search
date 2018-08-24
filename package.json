@@ -18,6 +18,7 @@
     "elasticsearch": "^13.0.1",
     "eslint": "^5.4.0",
     "lodash": "^4.17.4",
+    "mustache": "^2.3.2",
     "nanoflux-fusion": "^0.6.0-beta",
     "numeral": "^2.0.6",
     "riot": "^3.6.0",

@@ -1,0 +1,25 @@
+<es-feed>
+
+    <a target="{ opts.target }" href="{ url }">
+        <yield/>
+    </a>
+
+    <script>
+
+        var tag = this,
+            tpl = require("mustache");
+
+        tag.on('mount', function() {
+            tag.opts.target = tag.opts.target || '_blank';
+            tag.opts.href = tag.opts.href || '#';
+            tpl.parse(tag.opts.href, ['{','}']);
+            tag.update();
+        });
+
+        tag.on('update', function() {
+            tag.url = tag.opts.data ? tpl.render(tag.opts.href, tag.opts.data) : '#';
+        });
+
+    </script>
+
+</es-feed>

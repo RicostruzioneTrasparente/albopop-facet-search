@@ -1,0 +1,1 @@
+require('./es-feed.tag.html');

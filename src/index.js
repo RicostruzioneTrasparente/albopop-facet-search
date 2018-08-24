@@ -55,6 +55,9 @@ esListTags[0].on("submit", function(state) {
     search({ from: state.value });
 });
 
+require('./tags/es-feed/');
+var esFeedTags = riot.mount('es-feed');
+
 NanoFlux.createFusionator({
     search: function(previousState, args){
         var arg = args[0] || {};
@@ -126,6 +129,14 @@ var subscription = fusionStore.subscribe(this, function(currentState) {
                 }, t.opts)
             });
         }
+    });
+
+    _.forEach(esFeedTags, function(t) {
+        t.update({
+            opts: _.defaults({
+                data: currentState.query
+            }, t.opts)
+        });
     });
 
 });
