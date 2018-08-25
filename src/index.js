@@ -32,6 +32,7 @@ _.forEach(esFacetTags, function(t) {
         interval: t.opts.interval,
         size: t.opts.size,
         order: t.opts.order,
+        separator: t.opts.separator,
         values: []
     };
     t.on("submit", function(state) {
@@ -43,7 +44,7 @@ _.forEach(esFacetTags, function(t) {
 
 require('./tags/es-search/');
 var esSearchTags = riot.mount('es-search');
-initialState.query.fields = esSearchTags[0].opts.fields ? esSearchTags[0].opts.fields.split(',') : [];
+initialState.query.fields = esSearchTags[0].opts.fields || [];
 esSearchTags[0].on("submit", function(state) {
     search({ match: state.value });
 });
