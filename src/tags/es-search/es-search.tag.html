@@ -1,12 +1,26 @@
 <es-search>
 
-    <form class="search-form" onsubmit="{ this.submit }">
-        <div class="form-group">
-            <input class="search-input form-control" placeholder="{ opts.placeholder || '' }" value="{ opts.value || '' }">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                <span class="facet-title">{opts.title}</span>
+                <span class="facet-reset glyphicon glyphicon-repeat pull-right" onclick="{this.reset}"></span>
+            </h4>
         </div>
-    </form>
+        <div class="panel-body">
+            <form class="search-form" onsubmit="{this.submit}">
+                <div class="form-group">
+                    <input ref="input" class="search-input form-control" placeholder="{opts.placeholder || ''}" riot-value="{opts.value || ''}">
+                </div>
+            </form>
+        </div>
+        <div class="panel-footer"></div>
+    </div>
 
     <style>
+        .facet-reset {
+            cursor: pointer;
+        }
     </style>
 
     <script>
@@ -20,6 +34,11 @@
         tag.submit = function(e) {
             tag.trigger('submit', { value: tag.root.querySelector('input').value });
             if (e) e.preventDefault();
+        };
+
+        tag.reset = function(e) {
+            tag.refs.input.value = "";
+            tag.submit();
         };
     </script>
 

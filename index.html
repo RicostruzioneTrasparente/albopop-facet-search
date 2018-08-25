@@ -20,24 +20,25 @@
 
                     <div id="search-container">
 
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4>Testo libero</h4>
-                            </div>
                             <!-- Componente per la ricerca libera full-text
+                                 - title: titolo del componente
                                  - fields: campi in cui effettuare la ricerca
                                  - placeholder: come per il tag input
                                  - value: valore iniziale
                             -->
-                            <es-search fields="title,description" placeholder="Cerca..." value="">
+                            <es-search title="Testo libero" fields="title,description" placeholder="Cerca..." value="">
                                 <!-- Markup generato dal componente tra { } i valori degli attributi indicati
-                                <form class="search-form">
-                                    <input class="search-input" placeholder="{ placeholder }" value="{ value }">
-                                </form>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4>{ title }</h4>
+                                    </div>
+                                    <form class="search-form">
+                                        <input class="search-input" placeholder="{ placeholder }" value="{ value }">
+                                    </form>
+                                    <div class="panel-footer"></div>
+                                </div>
                                 -->
                             </es-search>
-                            <div class="panel-footer"></div>
-                        </div>
 
                     </div>
 
