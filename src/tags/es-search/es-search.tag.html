@@ -11,6 +11,12 @@
 
     <script>
         var tag = this;
+
+        tag.on("mount", function() {
+            tag.opts.type = 'search';
+            tag.opts.fields = tag.opts.fields ? tag.opts.fields.split(',') : [];
+        });
+
         tag.submit = function(e) {
             tag.trigger('submit', { value: tag.root.querySelector('input').value });
             if (e) e.preventDefault();
