@@ -1,22 +1,88 @@
 <es-list>
 
-    <div each="{ opts.items }" class="list-item panel panel-default"><yield/></div>
-    <nav>
-        <ul class="pagination pagination-sm">
-            <li class="list-page" ref="first" data-value="0"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-fast-backward"></span></a></li>
-            <li class="list-page" ref="fastPrev" data-value="0"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-backward"></span></a></li>
-            <li class="list-page" ref="prev" data-value="0"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-            <li each="{ page in opts.pages }" class="list-page list-page-number" data-value="{ page }"><a onclick="{ this.submit }"><span>{ page+1 }</span></a></li>
-            <li class="list-page" ref="next" data-value="1"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-            <li class="list-page" ref="fastNext" data-value="{ opts.maxPages-1 }"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-forward"></span></a></li>
-            <li class="list-page" ref="last" data-value="1"><a href="#" onclick="{ this.submit }"><span class="glyphicon glyphicon-fast-forward"></span></a></li>
-        </ul>
-    </nav>
+    <div class="row">
+
+        <div class="list-spinner col-xs-12">
+            <span class="glyphicon glyphicon-refresh glyphicon-spin"></span>
+        </div>
+
+        <div each="{ opts.items }" class="list-item-container col-{parent.opts.col} hidden">
+            <div class="list-item panel panel-default">
+                <yield/>
+            </div>
+        </div>
+        
+        <nav class="col-xs-12">
+            <ul class="pagination pagination-sm">
+                <li class="list-page" ref="first" data-value="0">
+                    <a href="#" onclick="{ this.submit }">
+                        <span class="glyphicon glyphicon-fast-backward"></span>
+                    </a>
+                </li>
+                <li class="list-page" ref="fastPrev" data-value="0">
+                    <a href="#" onclick="{ this.submit }">
+                        <span class="glyphicon glyphicon-backward"></span>
+                    </a>
+                </li>
+                <li class="list-page" ref="prev" data-value="0">
+                    <a href="#" onclick="{ this.submit }">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </a>
+                </li>
+                <li each="{ page in opts.pages }" class="list-page list-page-number" data-value="{ page }">
+                    <a onclick="{ this.submit }">
+                        <span class="glyphicon">{ page+1 }</span>
+                    </a>
+                </li>
+                <li class="list-page" ref="next" data-value="1">
+                    <a href="#" onclick="{ this.submit }">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </li>
+                <li class="list-page" ref="fastNext" data-value="{ opts.maxPages-1 }">
+                    <a href="#" onclick="{ this.submit }">
+                        <span class="glyphicon glyphicon-forward"></span>
+                    </a>
+                </li>
+                <li class="list-page" ref="last" data-value="1">
+                    <a href="#" onclick="{ this.submit }">
+                        <span class="glyphicon glyphicon-fast-forward"></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
 
     <style>
+
         :scope .list-page {
             cursor: pointer;
         }
+
+        :scope nav {
+            text-align: center;
+        }
+
+        :scope .list-spinner {
+            text-align: center; font-size: xx-large;
+        }
+
+        :scope .glyphicon-spin {
+            -webkit-animation: spin 1000ms infinite linear;
+            animation: spin 1000ms infinite linear;
+        }
+        
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(359deg); transform: rotate(359deg); }
+        }
+        
+        @keyframes spin {
+            0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(359deg); transform: rotate(359deg); }
+        }
+
     </style>
 
     <script>
@@ -25,10 +91,13 @@
 
         tag.on('mount', function() {
             tag.opts.size = +tag.opts.size || 10;
+            tag.opts.order = tag.opts.order ? tag.opts.order.split(':') : [];
+            tag.opts.col = tag.opts.col || "xs-12";
             tag.opts.maxPages = 5;
         });
 
         tag.on('update', function() {
+            tag.root.querySelector(".list-spinner").classList.remove("hidden");
             tag.opts.numPages = Math.floor(tag.opts.total / tag.opts.size) + 1;
             tag.opts.pages = Array.apply(null, Array(tag.opts.numPages)).map(function (_, i) {return i;});
         });
@@ -59,6 +128,8 @@
             }
 
             tag.refs.last.dataset.value = tag.opts.numPages-1;
+            tag.root.querySelector(".list-spinner").classList.add("hidden");
+            tag.root.querySelectorAll(".list-item-container").forEach(function(el) { el.classList.remove("hidden"); });
 
         });
 
@@ -71,7 +142,6 @@
             tag.refs.fastPrev.dataset.value = Math.max(page - page%tag.opts.maxPages - 1, 0);
             tag.refs.prev.dataset.value = Math.max(page - 1, 0);
             tag.refs.next.dataset.value = Math.min(page + 1, tag.opts.numPages - 1);
-            console.log(page,tag.opts.maxPages,page%tag.opts.maxPages);
             tag.refs.fastNext.dataset.value = Math.min(page - page%tag.opts.maxPages - 1 + ((page+1)%tag.opts.maxPages?1:2)*tag.opts.maxPages, tag.opts.numPages - 1);
             tag.trigger('submit', { value: page*tag.opts.size });
             if (e) e.preventDefault();
