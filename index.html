@@ -21,7 +21,6 @@
                     <div id="search-container">
 
                             <!-- Componente per la ricerca libera full-text
-                                 - title: titolo del componente
                                  - fields: campi in cui effettuare la ricerca
                                  - placeholder: come per il tag input
                                  - value: valore iniziale
@@ -138,7 +137,7 @@
 
                     <h2>
                         Atti amministrativi
-                        <es-feed class="pull-right" href="http://feeds.ricostruzionetrasparente.it/albi_pretori/?q=\{match\}&source=\{terms.municipality.values\}&size=25&format=rss">
+                        <es-feed class="pull-right" opening="<%" closing="%>" href="http://feeds.ricostruzionetrasparente.it/albi_pretori/?q=<%match%>&source=<%terms.municipality.values%>&size=25&format=rss">
                             <span class="glyphicon glyphicon-asterisk"></span>
                         </es-feed>
                     </h2>

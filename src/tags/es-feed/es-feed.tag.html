@@ -12,7 +12,7 @@
         tag.on('mount', function() {
             tag.opts.target = tag.opts.target || '_blank';
             tag.opts.href = tag.opts.href || '#';
-            tpl.parse(tag.opts.href, ['{','}']);
+            tpl.parse(tag.opts.href, [tag.opts.opening||'{',tag.opts.closing||'}']);
             tag.update();
         });
 
