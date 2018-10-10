@@ -14,7 +14,7 @@
     "url": "https://github.com/RicostruzioneTrasparente/albopop-facet-search.git"
   },
   "dependencies": {
-    "alasql": "^0.4.0",
+    "alasql": "github:jenkin/alasql#jenkin/develop",
     "elasticsearch": "^13.0.1",
     "eslint": "^5.4.0",
     "lodash": "^4.17.4",

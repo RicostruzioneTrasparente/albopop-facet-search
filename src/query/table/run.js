@@ -10,8 +10,15 @@ module.exports = (function() {
 
     var options = window.ES_CONFIG.options.table;
 
-    var table_params = options.type === 'CSV' ? ", {separator:'"+(options.separator||",")+"'}" : "",
-        table = options.type+"('"+options.file+"'"+table_params+")";
+    var table_params = "";
+
+    if (options.type === 'CSV') {
+        table_params = ", {separator:'"+(options.separator||",")+"'}";
+    } else if (options.type === 'TABLETOP' && options.sheet) {
+        table_params = ", {sheet:'"+options.sheet+"'}";
+    }
+
+    var table = options.type+"('"+options.file+"'"+table_params+")";
 
     function process(match,fields,terms,facet,size,from) {
 
