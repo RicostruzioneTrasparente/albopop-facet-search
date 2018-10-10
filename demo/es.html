@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ricostruzione Trasparente | AlboPOP | NanoFlux Fusion + RiotJS + Elasticsearch</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    </head>
+    <body>
+
+        <div class="container">
+
+            <header>
+                <h1>Immobili confiscati | Confiscati Bene (dev)</h2>
+            </header>
+
+            <div class="row">
+
+                <section class="col-md-4">
+
+                    <h2>Cerca e filtra</h2>
+
+                    <div id="search-container">
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Testo libero</h4>
+                            </div>
+                            <!-- Componente per la ricerca libera full-text
+                                 - fields: campi in cui effettuare la ricerca
+                                 - placeholder: come per il tag input
+                                 - value: valore iniziale
+                            -->
+                            <es-search title="Testo libero" fields="title,description" placeholder="Cerca..." value="sisma terremoto ricostruzione">
+                                <!-- Markup generato dal componente tra { } i valori degli attributi indicati
+                                <form class="search-form">
+                                    <input class="search-input" placeholder="{ placeholder }" value="{ value }">
+                                </form>
+                                -->
+                            </es-search>
+                            <div class="panel-footer"></div>
+                        </div>
+
+                    </div>
+
+                    <div id="facet-container">
+
+                        <!-- Componente per il filtro per parole (variabile categoriale)
+                             - title: titolo del componente
+                             - field: campo su cui applicare il filtro
+                             - size: numero massimo di termini visualizzati
+                             - order: ordinamento dei termini ("count:asc", "count:desc"*, "term:asc", "term:desc")
+                        -->
+                        <es-facet-keywords title="Regioni" field="region" size="20">
+                            <!-- Markup generato dal componente
+                                 - disabled: classe aggiunta alle voci con conteggio nullo
+                                 - active: classe aggiunta alle voci selezionate (filtro attivo)
+                                 - value: valore della variabile categoriale (parola)
+                                 - label: stringa mostrata all'utente, uguale a { valore }
+                                 - count: conteggio dei documenti per valore
+                            -->
+                            <!--
+                            <div class="facet-item { disable } { active }">
+                                <span class="facet-label" data-value="{ value }">{ label }</span>&nbsp;<span class="facet-count">{ count }</span>
+                            </div>
+                            ...
+                            -->
+                        </es-facet-keywords>
+
+                        <es-facet-keywords title="Province" field="province" size="110"></es-facet-keywords>
+
+                        <es-facet-keywords title="Comuni" field="municipality" size="100" height="10"></es-facet-keywords>
+
+                        <es-facet-keywords title="Tipologie" field="type" size="5"></es-facet-keywords>
+
+                    </div>
+
+                </section>
+
+                <section class="col-md-8">
+
+                    <h2>Atti amministrativi</h2>
+
+                    <div id="list-container">
+
+                        <!-- Componente per il rendering della lista dei risultati
+                             - size: numero di risultati per pagina
+                             - prev: etichetta per il controllo "pagina precedente"
+                             - next: etichetta per il controllo "pagina successiva"
+                        -->
+						<es-list size="25" prev="Pagina precedente" next="Pagina successiva" order="uid:desc">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <h4 data-uuid="{ uuid }">{ uid } - { municipality } ({ province }, { region })</h4>
+                                        </div>
+                                        <div class="col-sm-2" style="text-align:right;">
+                                            <a href="#" onclick="window.open('{link}'); return false;" target="_blank"><i class="fa fa-external-link" style="color:black"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <p>{ description }</p>
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <p>{ pubStart } - { pubEnd }</p>
+                                        </div>
+                                        <div class="col-sm-2" style="text-align:right;">
+                                            <a if="{ enclosure && enclosure.length }" each="{ enclosure }" href="#" onclick="window.open('http://feeds.ricostruzionetrasparente.it/albi_pretori/atti/{path}'); return false;" target="_blank"><i style="color:black;margin-left:2px;" class="fa fa-paperclip"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                        </es-list>
+                    </div>
+
+                </section>
+
+            </div>
+
+            <footer>
+                <p>CC BY 2017 onData | Powered by NanoFlux Fusion + RiotJS + Elasticsearch</p>
+            </footer>
+
+        </div>
+
+        <!-- I principali parametri di configurazione sono nel file config.js -->
+        <script src="./es.config.js"></script>
+        <script src="../dist/js/bundle.js"></script>
+
+    </body>
+</html>
