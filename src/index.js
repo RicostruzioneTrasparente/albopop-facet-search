@@ -15,7 +15,7 @@ var queries = {
 var query = queries[window.ES_CONFIG.backend];
 
 var initialState = {
-    query: { match: "", fields: [], terms: {}, facet: "", size: 10, from: 0 },
+    query: { match: "", fields: [], terms: {}, facet: "", size: 10, from: 0, order: [] },
     response: { total: 0, items: [], aggs: {} }
 };
 
@@ -52,6 +52,7 @@ esSearchTags[0].on("submit", function(state) {
 require('./tags/es-list/');
 var esListTags = riot.mount('es-list');
 initialState.query.size = +esListTags[0].opts.size || 10;
+initialState.query.order = esListTags[0].opts.order || [];
 esListTags[0].on("submit", function(state) {
     search({ from: state.value });
 });
@@ -68,7 +69,8 @@ NanoFlux.createFusionator({
             _.defaults(arg.terms || {}, previousState.query.terms),
             !_.isUndefined(arg.facet) ? arg.facet : previousState.query.facet,
             !_.isUndefined(arg.size) ? arg.size : previousState.query.size,
-            !_.isUndefined(arg.from) ? arg.from : previousState.query.from
+            !_.isUndefined(arg.from) ? arg.from : previousState.query.from,
+            !_.isUndefined(arg.order) ? arg.order : previousState.query.order
         );
 	}
 }, initialState);

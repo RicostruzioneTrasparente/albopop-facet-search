@@ -2,7 +2,7 @@
 var _ = require('lodash'),
     elasticsearch = require('elasticsearch');
 
-module.exports = function(match,fields,terms,facet,size,from) {
+module.exports = function(match,fields,terms,facet,size,from,order) {
 
     var client = new elasticsearch.Client({
         host: window.ES_CONFIG ? window.ES_CONFIG.options.es.host : "localhost:9200"
@@ -16,7 +16,7 @@ module.exports = function(match,fields,terms,facet,size,from) {
     return client.search({
         index: window.ES_CONFIG ? window.ES_CONFIG.options.es.index : 'my-index',
         type: window.ES_CONFIG ? window.ES_CONFIG.options.es.type : 'my-type',
-        body: buildQuery(match,fields,terms,size,from)
+        body: buildQuery(match,fields,terms,size,from,order)
     }).then(function(response) {
 
         var aggs = {};
@@ -31,7 +31,8 @@ module.exports = function(match,fields,terms,facet,size,from) {
                 terms: terms,
                 facet: facet,
                 size: size,
-                from: from
+                from: from,
+                order: order
             },
             response: {
                 total: response.hits.total,

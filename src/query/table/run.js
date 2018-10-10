@@ -12,19 +12,29 @@ module.exports = (function() {
 
     var table_params = "";
 
-    if (options.type === 'CSV') {
-        table_params = ", {separator:'"+(options.separator||",")+"'}";
-    } else if (options.type === 'TABLETOP' && options.sheet) {
-        table_params = ", {sheet:'"+options.sheet+"'}";
+    switch (options.type) {
+        case 'CSV':
+            table_params = ", {separator:'"+(options.separator||",")+"'}";
+            break;
+        case 'TABLETOP':
+        case 'GSHEET':
+            table_params = ", {sheet:'"+(options.sheet||"")+"'}";
+            break;
+        default:
+            table_params = "";
+            break;
     }
 
     var table = options.type+"('"+options.file+"'"+table_params+")";
 
-    function process(match,fields,terms,facet,size,from) {
+    function process(match,fields,terms,facet,size,from,order) {
 
         var match = match || "",
             fields = fields ? _.map(fields, function(f) { return f.replace(/[\.]/g, (options.type === 'JSON' ? '->' : '.')); }) : [],
             terms = terms || {};
+
+        var sortBy = !_.isEmpty(order) ? order[0] : "",
+            sortDirection = !_.isEmpty(order) && order.length > 1 ? order[1] : "DESC";
 
         var where_match = _.join(
                 _.map(fields, function(f) {
@@ -46,6 +56,7 @@ module.exports = (function() {
                                 _.map(
                                     t.values,
                                     function(v) {
+                                        var v = v.trim();
                                         return ""+
                                             "`"+field+"` LIKE '%"+t.separator+v+t.separator+"%'"+
                                             " OR `"+field+"` LIKE '%"+t.separator+v+"%'"+
@@ -60,12 +71,13 @@ module.exports = (function() {
                     }
                 )," AND "
             ),
-            where = "("+(match ? where_match : "1") + ") AND (" + (where_terms || "1")+")";
+            where = "("+(match ? where_match : "1") + ") AND (" + (where_terms || "1")+")",
+            orderby = !_.isEmpty(order) ? "ORDER BY "+sortBy+" "+sortDirection : "";
 
         var vterms = _.values(terms);
 
         var statements = _.concat(
-            [["SELECT * FROM ? WHERE "+where+" LIMIT "+(size||10)+" OFFSET "+(from||0), [data]]],
+            [["SELECT * FROM ? WHERE "+where+" "+orderby+" LIMIT "+(size||10)+" OFFSET "+(from||0), [data]]],
             _.map(vterms, function(v) {
                 var field = v.field.replace(/[\.]/g, (options.type === 'JSON' ? '->' : '.'));
                 return [_.join([
@@ -111,7 +123,7 @@ module.exports = (function() {
         });
     };
 
-    return function(match,fields,terms,facet,size,from) {
+    return function(match,fields,terms,facet,size,from,order) {
 
         if (_.isUndefined(data)) {
             return alasql.promise("SELECT * FROM "+table).then(function(response) {
@@ -120,15 +132,15 @@ module.exports = (function() {
                     _.each(response, function(el) {
                         _.each(el[term.field].split(term.separator), function(tag) {
                             var item = _.cloneDeep(el);
-                            item[term.field] = tag;
+                            item[term.field] = tag.trim();
                             tags.push(item);
                         });
                     });
                 });
-                return process(match,fields,terms,facet,size,from);
+                return process(match,fields,terms,facet,size,from,order);
             });
         } else {
-            return process(match,fields,terms,facet,size,from);
+            return process(match,fields,terms,facet,size,from,order);
         }
 
     };
